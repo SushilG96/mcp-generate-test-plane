@@ -1,0 +1,1 @@
+https://www.cloudera.com/blog/technical/cloudera-lakehouse-optimizer-easier-to-deliver-high-performance-iceberg-tables.html 
