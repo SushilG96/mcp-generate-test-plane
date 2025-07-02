@@ -1,959 +1,2032 @@
 {
-    "openapi":"3.0.1",
-    "info":{
-       "title":"Lakehouse Optimizer REST APIs",
-       "description":"This describes various API's to interact with Cloudera Lakehouse Optimizer service. You can find out more about Lakehouse Optimizer at [Cloudera Lakehouse Optimizer doc](https://docs.cloudera.com/runtime/latest/clo-for-iceberg-tables.pdf).",
-       "termsOfService":"http://swagger.io/terms/",
-       "contact":{
-          "email":"ngangam@cloudera.com, hbiestro@cloudera.com, zdeng@cloudera.com, vrai@cloudera.com, prabhatmishra@cloudera.com"
+   "openapi": "3.0.1",
+   "info": {
+       "title": "DLM REST API'S",
+       "description": "This describes various API's to interact with DLM service. You can find out more about DLM at [DLM doc](https://docs.google.com/document/d/1JjpheEkW0jdmepVq90KvDUPKgMVEDNqZlhuc-WWDJ7o/edit#heading=h.vx34qtovcl1d). For this sample, you can use the api key.",
+       "termsOfService": "http://swagger.io/terms/",
+       "contact": {
+           "email": "ngangam@cloudera.com, hbiestro@cloudera.com, zdeng@cloudera.com, vrai@cloudera.com, prabhatmishra@cloudera.com"
        },
-       "license":{
-          "name":"Apache 2.0",
-          "url":"http://www.apache.org/licenses/LICENSE-2.0.html"
+       "license": {
+           "name": "Apache 2.0",
+           "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
        },
-       "version":"1.0"
-    },
-    "servers":[
+       "version": "1.0"
+   },
+   "servers": [
        {
-          "url":"/clo/api/v1"
-       },
-       {
-          "description":"knox based cdp-proxy-token endpoint",
-          "url":"/lakehous-7qx85d/cdp-proxy-token/clo/api/v1"
+           "url": "http://localhost:8082/dlm/api/v1",
+           "description": "Development server"
        }
-    ],
-    "security":[
-       {
-          "BearerAuth":[
-             
-          ]
+   ],
+   "paths": {
+       "/auth/login": {
+           "post": {
+               "operationId": "loginJson",
+               "requestBody": {
+                   "content": {
+                       "application/json": {
+                           "schema": {
+                               "$ref": "#/components/schemas/LoginRequest"
+                           }
+                       }
+                   }
+               },
+               "responses": {
+                   "default": {
+                       "description": "default response",
+                       "content": {
+                           "application/json": {}
+                       }
+                   }
+               }
+           }
+       },
+       "/auth/logout": {
+           "post": {
+               "operationId": "logout",
+               "responses": {
+                   "default": {
+                       "description": "default response",
+                       "content": {
+                           "application/json": {}
+                       }
+                   }
+               }
+           }
+       },
+       "/auth/logoutadmin": {
+           "post": {
+               "operationId": "logoutAdmin",
+               "responses": {
+                   "default": {
+                       "description": "default response",
+                       "content": {
+                           "application/json": {}
+                       }
+                   }
+               }
+           }
+       },
+       "/auth/logoutmonitor": {
+           "post": {
+               "operationId": "logoutMonitor",
+               "responses": {
+                   "default": {
+                       "description": "default response",
+                       "content": {
+                           "application/json": {}
+                       }
+                   }
+               }
+           }
+       },
+       "/auth/logoutoperator": {
+           "post": {
+               "operationId": "logoutOperator",
+               "responses": {
+                   "default": {
+                       "description": "default response",
+                       "content": {
+                           "application/json": {}
+                       }
+                   }
+               }
+           }
+       },
+       "/auth/logoutuser": {
+           "post": {
+               "operationId": "logoutUser",
+               "responses": {
+                   "default": {
+                       "description": "default response",
+                       "content": {
+                           "application/json": {}
+                       }
+                   }
+               }
+           }
+       },
+       "/auth/refreshToken": {
+           "post": {
+               "operationId": "refreshToken",
+               "responses": {
+                   "default": {
+                       "description": "default response",
+                       "content": {
+                           "application/json": {}
+                       }
+                   }
+               }
+           }
+       },
+       "/config/health": {
+           "get": {
+               "tags": [
+                   "config"
+               ],
+               "summary": "Performs health-check",
+               "description": "Retrieves the health state of DLM components.",
+               "operationId": "health",
+               "responses": {
+                   "200": {
+                       "description": "Service wise health check result",
+                       "content": {
+                           "application/json": {
+                               "schema": {
+                                   "type": "string"
+                               }
+                           }
+                       }
+                   }
+               }
+           }
+       },
+       "/config/reconfigure": {
+           "post": {
+               "tags": [
+                   "config"
+               ],
+               "summary": "Reconfigure DLM service",
+               "description": "Reconfigures the DLM service by fetching the latest policies and restarting the service.",
+               "operationId": "reconfigure",
+               "responses": {
+                   "200": {
+                       "description": "The DLM service has been successfully reconfigured.",
+                       "content": {
+                           "application/json": {
+                               "schema": {
+                                   "type": "object",
+                                   "properties": {
+                                       "status": {
+                                           "type": "integer",
+                                           "example": 200
+                                       },
+                                       "result": {
+                                           "type": "string",
+                                           "example": null
+                                       },
+                                       "message": {
+                                           "type": "string",
+                                           "example": "Reconfigured successfully"
+                                       }
+                                   }
+                               }
+                           }
+                       }
+                   },
+                   "500": {
+                       "description": "An error occurred during the reconfiguration process.",
+                       "content": {
+                           "application/json": {
+                               "schema": {
+                                   "type": "object",
+                                   "properties": {
+                                       "status": {
+                                           "type": "integer",
+                                           "example": 500
+                                       },
+                                       "result": {
+                                           "type": "string",
+                                           "example": null
+                                       },
+                                       "message": {
+                                           "type": "string",
+                                           "example": "Exception reason"
+                                       }
+                                   }
+                               }
+                           }
+                       }
+                   }
+               }
+           }
+       },
+       "/namespaces/{namespace}/policies": {
+           "get": {
+               "tags": [
+                   "namespaces"
+               ],
+               "summary": "List policies associated to all tables of a namespace",
+               "description": "Fetches the policy names associated to all tables of a namespace",
+               "operationId": "fetchPolicies",
+               "parameters": [
+                   {
+                       "name": "namespace",
+                       "in": "path",
+                       "required": true,
+                       "schema": {
+                           "type": "string"
+                       }
+                   }
+               ],
+               "responses": {
+                   "200": {
+                       "description": "Policies name fetch is successful",
+                       "content": {
+                           "application/json": {
+                               "schema": {
+                                   "type": "object",
+                                   "properties": {
+                                       "result": {
+                                           "type": "string"
+                                       }
+                                   }
+                               }
+                           }
+                       }
+                   },
+                   "404": {
+                       "description": "No policies associated to namespace"
+                   }
+               }
+           }
+       },
+       "/namespaces": {
+           "get": {
+               "tags": [
+                   "namespaces"
+               ],
+               "summary": "Get all known namespaces",
+               "description": "Retrieves a list of all namespaces.",
+               "operationId": "getAllNamespaces",
+               "parameters": [
+                   {
+                       "name": "fetch",
+                       "in": "query",
+                       "schema": {
+                           "type": "boolean"
+                       },
+                       "example": true
+                   }
+               ],
+               "responses": {
+                   "200": {
+                       "content": {
+                           "application/json": {
+                               "examples": {
+                                   "List Namespace Response": {
+                                       "description": "List Namespace Response",
+                                       "value": {
+                                           "status": 200,
+                                           "result": {
+                                               "namespaces": [
+                                                   "ns1",
+                                                   "ns2",
+                                                   "ns3"
+                                               ]
+                                           },
+                                           "message": "All namespaces"
+                                       }
+                                   }
+                               }
+                           }
+                       }
+                   }
+               }
+           }
+       },
+       "/namespaces/{namespace}/paused": {
+           "put": {
+               "tags": [
+                   "namespaces"
+               ],
+               "summary": "Removes a namespace",
+               "description": "Removes a namespace from the list of maintainable sets of tables.",
+               "operationId": "pauseNamespace",
+               "parameters": [
+                   {
+                       "name": "namespace",
+                       "in": "path",
+                       "required": true,
+                       "schema": {
+                           "type": "string"
+                       },
+                       "example": "production"
+                   }
+               ],
+               "responses": {
+                   "200": {
+                       "content": {
+                           "application/json": {
+                               "examples": {
+                                   "Pause Namespace Response": {
+                                       "description": "Pause Namespace Response",
+                                       "value": {
+                                           "status": 200,
+                                           "result": {
+                                               "namespace": "ns1"
+                                           },
+                                           "message": "Removed namespace"
+                                       }
+                                   }
+                               }
+                           }
+                       }
+                   }
+               }
+           },
+           "delete": {
+               "tags": [
+                   "namespaces"
+               ],
+               "summary": "Resumes a namespace",
+               "description": "Resume scheduling a namespace, re-adding to the list of maintainable sets of tables.",
+               "operationId": "resumeNamespace",
+               "parameters": [
+                   {
+                       "name": "namespace",
+                       "in": "path",
+                       "required": true,
+                       "schema": {
+                           "type": "string"
+                       },
+                       "example": "production"
+                   }
+               ],
+               "responses": {
+                   "200": {
+                       "content": {
+                           "application/json": {
+                               "examples": {
+                                   "Resume Namespace Response": {
+                                       "description": "Resume Namespace Response",
+                                       "value": {
+                                           "status": 200,
+                                           "result": {
+                                               "namespace": "ns1"
+                                           },
+                                           "message": "Removed namespace"
+                                       }
+                                   }
+                               }
+                           }
+                       }
+                   }
+               }
+           }
+       },
+       "/namespaces/{namespace}": {
+           "put": {
+               "tags": [
+                   "namespaces"
+               ],
+               "summary": "Declare a new namespace",
+               "description": "Adds a namespace to the list of maintainable sets of tables.",
+               "operationId": "putNamespace",
+               "parameters": [
+                   {
+                       "name": "namespace",
+                       "in": "path",
+                       "required": true,
+                       "schema": {
+                           "type": "string"
+                       },
+                       "example": "production"
+                   }
+               ],
+               "responses": {
+                   "200": {
+                       "content": {
+                           "application/json": {
+                               "examples": {
+                                   "Declare Namespace Response": {
+                                       "description": "Declare Namespace Response",
+                                       "value": {
+                                           "status": 200,
+                                           "result": {
+                                               "namespace": "ns1"
+                                           },
+                                           "message": "Paused namespaces"
+                                       }
+                                   }
+                               }
+                           }
+                       }
+                   }
+               }
+           },
+           "delete": {
+               "tags": [
+                   "namespaces"
+               ],
+               "summary": "Removes a namespace",
+               "description": "Removes a namespace from the list of maintainable sets of tables.",
+               "operationId": "removeNamespace",
+               "parameters": [
+                   {
+                       "name": "namespace",
+                       "in": "path",
+                       "required": true,
+                       "schema": {
+                           "type": "string"
+                       },
+                       "example": "production"
+                   }
+               ],
+               "responses": {
+                   "200": {
+                       "content": {
+                           "application/json": {
+                               "examples": {
+                                   "Remove Namespace Response": {
+                                       "description": "Remove Namespace Response",
+                                       "value": {
+                                           "status": 200,
+                                           "result": {
+                                               "namespace": "ns1"
+                                           },
+                                           "message": "Removed namespace"
+                                       }
+                                   }
+                               }
+                           }
+                       }
+                   }
+               }
+           },
+           "patch": {
+               "tags": [
+                   "namespaces"
+               ],
+               "summary": "Reschedules a namespace",
+               "description": "Updates the policies for all tables of a namespace.",
+               "operationId": "updateNamespace",
+               "parameters": [
+                   {
+                       "name": "namespace",
+                       "in": "path",
+                       "required": true,
+                       "schema": {
+                           "type": "string"
+                       },
+                       "example": "production"
+                   }
+               ],
+               "responses": {
+                   "200": {
+                       "content": {
+                           "application/json": {
+                               "examples": {
+                                   "Update Namespace Response": {
+                                       "description": "Update Namespace Response",
+                                       "value": {
+                                           "status": 200,
+                                           "result": {
+                                               "namespace": "ns1"
+                                           },
+                                           "message": "Updated namespace"
+                                       }
+                                   }
+                               }
+                           }
+                       }
+                   }
+               }
+           }
+       },
+       "/policies/resource": {
+           "get": {
+               "tags": [
+                   "policies"
+               ],
+               "summary": "Fetch the policy resource file based on the uri",
+               "description": "Resolve the policy resource uri and return the retrieved policy script or property file",
+               "operationId": "fetchResource",
+               "parameters": [
+                   {
+                       "name": "uri",
+                       "in": "query",
+                       "schema": {
+                           "type": "string"
+                       }
+                   }
+               ],
+               "responses": {
+                   "200": {
+                       "description": "Resource fetch is successful",
+                       "content": {
+                           "application/json": {
+                               "schema": {
+                                   "type": "object",
+                                   "properties": {
+                                       "result": {
+                                           "type": "string",
+                                           "format": "binary"
+                                       }
+                                   }
+                               }
+                           }
+                       }
+                   },
+                   "404": {
+                       "description": "Resource not found for the given uri"
+                   },
+                   "500": {
+                       "description": "Exceptions"
+                   }
+               }
+           },
+           "put": {
+               "tags": [
+                   "policies"
+               ],
+               "summary": "Create the policy resources based on uris",
+               "description": "Create policy resources by uploading multipart form data with multiple resource files and uris",
+               "operationId": "createResource",
+               "requestBody": {
+                   "description": "multipart/form-data with key as resource uri and value is the file",
+                   "required": true
+               },
+               "responses": {
+                   "200": {
+                       "description": "Resource creation is successful",
+                       "content": {
+                           "application/json": {
+                               "schema": {
+                                   "type": "object",
+                                   "properties": {
+                                       "status": {
+                                           "type": "integer",
+                                           "example": 200
+                                       },
+                                       "message": {
+                                           "type": "string",
+                                           "example": "Create success"
+                                       }
+                                   }
+                               }
+                           }
+                       }
+                   },
+                   "500": {
+                       "description": "Exceptions"
+                   }
+               }
+           },
+           "patch": {
+               "tags": [
+                   "policies"
+               ],
+               "summary": "Update the policy resources based on uris",
+               "description": "Update policy resources by uploading multipart form data with multiple resource files and uris",
+               "operationId": "updateResource",
+               "requestBody": {
+                   "description": "multipart/form-data with key as resource uri and value is the file",
+                   "required": true
+               },
+               "responses": {
+                   "200": {
+                       "description": "Resource update is successful",
+                       "content": {
+                           "application/json": {
+                               "schema": {
+                                   "type": "object",
+                                   "properties": {
+                                       "status": {
+                                           "type": "integer",
+                                           "example": 200
+                                       },
+                                       "message": {
+                                           "type": "string",
+                                           "example": "Update success"
+                                       }
+                                   }
+                               }
+                           }
+                       }
+                   },
+                   "404": {
+                       "description": "Resource not found to update"
+                   },
+                   "500": {
+                       "description": "Exceptions"
+                   }
+               }
+           }
+       },
+       "/policies/{policyName}/tables/{tableName}/subs": {
+           "put": {
+               "tags": [
+                   "policies"
+               ],
+               "summary": " Adds a new a policy to a table subscription",
+               "description": "Allows an administrator to add a policy to a table.",
+               "operationId": "updateTablePolicy",
+               "parameters": [
+                   {
+                       "name": "policyName",
+                       "in": "path",
+                       "required": true,
+                       "schema": {
+                           "type": "string"
+                       }
+                   },
+                   {
+                       "name": "tableName",
+                       "in": "path",
+                       "required": true,
+                       "schema": {
+                           "type": "string"
+                       }
+                   }
+               ],
+               "responses": {
+                   "200": {
+                       "description": "The policy was successfully assigned to the table. The set of policies assigned to the table are returned in the 'result' field.",
+                       "content": {
+                           "application/json": {
+                               "schema": {
+                                   "type": "object",
+                                   "properties": {
+                                       "status": {
+                                           "type": "integer",
+                                           "example": 200
+                                       },
+                                       "result": {
+                                           "type": "string"
+                                       },
+                                       "message": {
+                                           "type": "string",
+                                           "example": "Success"
+                                       }
+                                   }
+                               }
+                           }
+                       }
+                   },
+                   "404": {
+                       "description": "The table namespace is not maintained."
+                   }
+               }
+           },
+           "post": {
+               "tags": [
+                   "policies"
+               ],
+               "summary": "Assigns a sole policy to a table",
+               "description": "Allows an administrator to set this sole policy to a table.",
+               "operationId": "setTablePolicy",
+               "parameters": [
+                   {
+                       "name": "policyName",
+                       "in": "path",
+                       "required": true,
+                       "schema": {
+                           "type": "string"
+                       }
+                   },
+                   {
+                       "name": "tableName",
+                       "in": "path",
+                       "required": true,
+                       "schema": {
+                           "type": "string"
+                       }
+                   }
+               ],
+               "responses": {
+                   "200": {
+                       "description": "The policy was successfully assigned to the table. The 'result' field contains this sole policy.",
+                       "content": {
+                           "application/json": {
+                               "schema": {
+                                   "type": "object",
+                                   "properties": {
+                                       "status": {
+                                           "type": "integer",
+                                           "example": 200
+                                       },
+                                       "result": {
+                                           "type": "string"
+                                       },
+                                       "message": {
+                                           "type": "string",
+                                           "example": "Success"
+                                       }
+                                   }
+                               }
+                           }
+                       }
+                   },
+                   "404": {
+                       "description": "The table namespace is not maintained."
+                   }
+               }
+           },
+           "delete": {
+               "tags": [
+                   "policies"
+               ],
+               "summary": "Assigns a policy to a table",
+               "description": "Allows an administrator to assign a policy to a table.",
+               "operationId": "deleteTablePolicy",
+               "parameters": [
+                   {
+                       "name": "policyName",
+                       "in": "path",
+                       "required": true,
+                       "schema": {
+                           "type": "string"
+                       }
+                   },
+                   {
+                       "name": "tableName",
+                       "in": "path",
+                       "required": true,
+                       "schema": {
+                           "type": "string"
+                       }
+                   }
+               ],
+               "responses": {
+                   "200": {
+                       "description": "The policy was successfully assigned to the table. The set of policies assigned to the table are returned in the 'result' field.",
+                       "content": {
+                           "application/json": {
+                               "schema": {
+                                   "type": "object",
+                                   "properties": {
+                                       "status": {
+                                           "type": "integer",
+                                           "example": 200
+                                       },
+                                       "result": {
+                                           "type": "string"
+                                       },
+                                       "message": {
+                                           "type": "string",
+                                           "example": "Success"
+                                       }
+                                   }
+                               }
+                           }
+                       }
+                   },
+                   "404": {
+                       "description": "The table namespace is not maintained."
+                   }
+               }
+           }
+       },
+       "/policies/{policyName}/tables/{tableName}/dryrun": {
+           "put": {
+               "tags": [
+                   "policies"
+               ],
+               "summary": "Dryrun a policy on a table",
+               "description": "Allows an administrator to test and debug a new policy on a table.",
+               "operationId": "dryRun",
+               "parameters": [
+                   {
+                       "name": "policyName",
+                       "in": "path",
+                       "required": true,
+                       "schema": {
+                           "type": "string"
+                       }
+                   },
+                   {
+                       "name": "tableName",
+                       "in": "path",
+                       "required": true,
+                       "schema": {
+                           "type": "string"
+                       }
+                   },
+                   {
+                       "name": "needStatistics",
+                       "in": "query",
+                       "schema": {
+                           "type": "boolean"
+                       }
+                   }
+               ],
+               "responses": {
+                   "200": {
+                       "description": "The policy dryrun did not generate any task."
+                   },
+                   "500": {
+                       "description": "An error occurred during the policy dryrun."
+                   }
+               }
+           }
+       },
+       "/policies/{policyName}/tables/{tableName}/evaluation": {
+           "post": {
+               "tags": [
+                   "policies"
+               ],
+               "summary": "Evaluate a policy on a table",
+               "description": "Allows an administrator to schedule and evaluate a new policy on a table if it is not already scheduled.",
+               "operationId": "evaluatePolicy",
+               "parameters": [
+                   {
+                       "name": "policyName",
+                       "in": "path",
+                       "required": true,
+                       "schema": {
+                           "type": "string"
+                       }
+                   },
+                   {
+                       "name": "tableName",
+                       "in": "path",
+                       "required": true,
+                       "schema": {
+                           "type": "string"
+                       }
+                   }
+               ],
+               "responses": {
+                   "200": {
+                       "description": "The policy evaluation could not be performed due to empty actions or inflight tasks."
+                   },
+                   "500": {
+                       "description": "An error occurred during the policy evaluation."
+                   }
+               }
+           }
+       },
+       "/policies/active": {
+           "get": {
+               "tags": [
+                   "policies"
+               ],
+               "summary": "Get all active policies",
+               "description": "Retrieves a list of all policies that are currently associated with any table within a catalog.",
+               "operationId": "fetchActivePolicies",
+               "parameters": [
+                   {
+                       "name": "namespace",
+                       "in": "query",
+                       "schema": {
+                           "type": "string"
+                       }
+                   }
+               ],
+               "responses": {
+                   "200": {
+                       "description": "All active policies",
+                       "content": {
+                           "application/json": {
+                               "schema": {
+                                   "type": "object",
+                                   "properties": {
+                                       "status": {
+                                           "type": "integer",
+                                           "example": 200
+                                       },
+                                       "result": {
+                                           "type": "string",
+                                           "example": [
+                                               "policy1",
+                                               "policy2",
+                                               "policy3"
+                                           ]
+                                       },
+                                       "message": {
+                                           "type": "string",
+                                           "example": "Success"
+                                       }
+                                   }
+                               }
+                           }
+                       }
+                   }
+               }
+           }
+       },
+       "/policies/{policyName}/tables": {
+           "get": {
+               "tags": [
+                   "policies"
+               ],
+               "summary": "List tables associated to a policy",
+               "description": "Fetches the table names associated to a policy",
+               "operationId": "fetchTables",
+               "parameters": [
+                   {
+                       "name": "policyName",
+                       "in": "path",
+                       "required": true,
+                       "schema": {
+                           "type": "string"
+                       }
+                   },
+                   {
+                       "name": "namespace",
+                       "in": "query",
+                       "schema": {
+                           "type": "string"
+                       }
+                   }
+               ],
+               "responses": {
+                   "200": {
+                       "description": "Table name fetch is successful",
+                       "content": {
+                           "application/json": {
+                               "schema": {
+                                   "type": "object",
+                                   "properties": {
+                                       "result": {
+                                           "type": "string"
+                                       }
+                                   }
+                               }
+                           }
+                       }
+                   },
+                   "404": {
+                       "description": "No tables associated to policy"
+                   }
+               }
+           }
+       },
+       "/policies/paused": {
+           "get": {
+               "tags": [
+                   "policies"
+               ],
+               "summary": "Get all paused policies",
+               "description": "Retrieves a list of all policies that are currently paused because of continuous failures during evaluation.",
+               "operationId": "getPausedPolices",
+               "parameters": [
+                   {
+                       "name": "namespace",
+                       "in": "query",
+                       "schema": {
+                           "type": "string"
+                       }
+                   }
+               ],
+               "responses": {
+                   "200": {
+                       "description": "All denied policies",
+                       "content": {
+                           "application/json": {
+                               "schema": {
+                                   "type": "object",
+                                   "properties": {
+                                       "status": {
+                                           "type": "integer",
+                                           "example": 200
+                                       },
+                                       "result": {
+                                           "type": "array",
+                                           "items": {
+                                               "$ref": "#/components/schemas/PolicyDetail"
+                                           }
+                                       },
+                                       "message": {
+                                           "type": "string",
+                                           "example": "Denied policies"
+                                       }
+                                   }
+                               }
+                           }
+                       }
+                   }
+               }
+           },
+           "delete": {
+               "tags": [
+                   "policies"
+               ],
+               "summary": "Remove all paused policies",
+               "description": "Removes all policies that are currently paused for scheduling.",
+               "operationId": "removeAllPausedPolicies",
+               "responses": {
+                   "200": {
+                       "description": "All paused policies have been removed. The number of policies removed is returned in the 'result' field.",
+                       "content": {
+                           "application/json": {
+                               "schema": {
+                                   "type": "object",
+                                   "properties": {
+                                       "status": {
+                                           "type": "integer",
+                                           "example": 200
+                                       },
+                                       "result": {
+                                           "type": "integer",
+                                           "example": 10
+                                       },
+                                       "message": {
+                                           "type": "string",
+                                           "example": "Removed all paused policies"
+                                       }
+                                   }
+                               }
+                           }
+                       }
+                   }
+               }
+           }
+       },
+       "/policies/{policyVersion}/paused": {
+           "get": {
+               "tags": [
+                   "policies"
+               ],
+               "summary": "Get the reason for a paused policy",
+               "description": "Retrieves the reason behind the pausing of a particular policy.",
+               "operationId": "getPolicyPausedReason",
+               "parameters": [
+                   {
+                       "name": "policyVersion",
+                       "in": "path",
+                       "required": true,
+                       "schema": {
+                           "type": "string"
+                       },
+                       "example": "ab3ebecb-79b1-53a4-94c3-f93f395b2493"
+                   }
+               ],
+               "responses": {
+                   "200": {
+                       "description": "The paused policy details have been successfully retrieved.",
+                       "content": {
+                           "application/json": {
+                               "schema": {
+                                   "type": "object",
+                                   "properties": {
+                                       "status": {
+                                           "type": "integer",
+                                           "example": 200
+                                       },
+                                       "result": {
+                                           "type": "string",
+                                           "example": {
+                                               "policyVersion": "ab3ebecb-79b1-53a4-94c3-f93f395b2493",
+                                               "paused-since": "2024-03-28 16:54:00",
+                                               "tablesAffected": [],
+                                               "script": "dlm-service/snapshots-daily.jexl",
+                                               "reasons": [
+                                                   "dlm-service/snapshots-daily.jexl@6:11 JEXL error: + error caused by null operand"
+                                               ],
+                                               "constants": {
+                                                   "actions": {}
+                                               }
+                                           }
+                                       },
+                                       "message": {
+                                           "type": "string"
+                                       }
+                                   }
+                               }
+                           }
+                       }
+                   },
+                   "404": {
+                       "description": "The provided policyId was not found in the paused list."
+                   }
+               }
+           },
+           "delete": {
+               "tags": [
+                   "policies"
+               ],
+               "summary": "Remove a paused policy",
+               "description": "Removes a policy that is currently paused for scheduling.",
+               "operationId": "removePausedPolicy",
+               "parameters": [
+                   {
+                       "name": "policyVersion",
+                       "in": "path",
+                       "required": true,
+                       "schema": {
+                           "type": "string"
+                       },
+                       "example": "4cd03968-5a58-5474-8e03-2513cddfbe31"
+                   }
+               ],
+               "responses": {
+                   "200": {
+                       "description": "The paused policy has been successfully removed.",
+                       "content": {
+                           "application/json": {
+                               "schema": {
+                                   "type": "object",
+                                   "properties": {
+                                       "status": {
+                                           "type": "integer",
+                                           "example": 200
+                                       },
+                                       "result": {
+                                           "type": "string",
+                                           "example": null
+                                       },
+                                       "message": {
+                                           "type": "string",
+                                           "example": "4cd03968-5a58-5474-8e03-2513cddfbe31 removed successfully"
+                                       }
+                                   }
+                               }
+                           }
+                       }
+                   },
+                   "404": {
+                       "description": "The provided policyVersion was not found in the paused list."
+                   }
+               }
+           }
+       },
+       "/policies/{policyName}/tables/{tableName}/desc": {
+           "get": {
+               "tags": [
+                   "policies"
+               ],
+               "summary": "Describe policy applicable on a table",
+               "description": "Fetches the policy version applicable for a table",
+               "operationId": "getTablePolicy",
+               "parameters": [
+                   {
+                       "name": "policyName",
+                       "in": "path",
+                       "required": true,
+                       "schema": {
+                           "type": "string"
+                       }
+                   },
+                   {
+                       "name": "tableName",
+                       "in": "path",
+                       "required": true,
+                       "schema": {
+                           "type": "string"
+                       }
+                   }
+               ],
+               "responses": {
+                   "200": {
+                       "description": "Policy fetch is successful",
+                       "content": {
+                           "application/json": {
+                               "schema": {
+                                   "type": "object",
+                                   "properties": {
+                                       "result": {
+                                           "$ref": "#/components/schemas/Policy"
+                                       }
+                                   }
+                               }
+                           }
+                       }
+                   },
+                   "404": {
+                       "description": "Policy not found for specified table"
+                   }
+               }
+           }
+       },
+       "/tables/{tableId}/paused": {
+           "get": {
+               "tags": [
+                   "tables"
+               ],
+               "summary": "Paused table details.",
+               "description": "This operation provides details about when the table was paused from scheduling, as well as the reasons for the pausing.",
+               "operationId": "getTablePausedReason",
+               "parameters": [
+                   {
+                       "name": "tableId",
+                       "in": "path",
+                       "required": true,
+                       "schema": {
+                           "type": "string"
+                       },
+                       "example": "hive.default.this_is_an_iceberg_tab"
+                   }
+               ],
+               "responses": {
+                   "200": {
+                       "description": "Successful retrieval of data",
+                       "content": {
+                           "application/json": {
+                               "examples": {
+                                   "Example Response": {
+                                       "description": "Example Response",
+                                       "value": {
+                                           "status": 200,
+                                           "result": {
+                                               "table": "hive.default.this_is_an_iceberg_tab",
+                                               "paused-since": "2024-03-28 16:32:57",
+                                               "reasons": [
+                                                   "java.util.concurrent.ExecutionException: exception root-cause"
+                                               ]
+                                           },
+                                           "message": ""
+                                       }
+                                   }
+                               }
+                           }
+                       }
+                   },
+                   "404": {
+                       "description": "Data not found"
+                   }
+               }
+           },
+           "put": {
+               "tags": [
+                   "tables"
+               ],
+               "summary": "Add a table to the paused list",
+               "description": "Allows an administrator to add a specific table to the paused list, which prevents the table from being scheduled until it is unpaused.",
+               "operationId": "addPausedTable",
+               "parameters": [
+                   {
+                       "name": "tableId",
+                       "in": "path",
+                       "required": true,
+                       "schema": {
+                           "type": "string"
+                       },
+                       "example": "hive.default.t1"
+                   }
+               ],
+               "responses": {
+                   "200": {
+                       "description": "The table has been successfully added to the paused list and will not be available for scheduling.",
+                       "content": {
+                           "application/json": {
+                               "schema": {
+                                   "type": "object",
+                                   "properties": {
+                                       "status": {
+                                           "type": "integer",
+                                           "example": 200
+                                       },
+                                       "result": {
+                                           "type": "string",
+                                           "example": null
+                                       },
+                                       "message": {
+                                           "type": "string",
+                                           "example": "hive.default.t1 added to paused list successfully"
+                                       }
+                                   }
+                               }
+                           }
+                       }
+                   },
+                   "400": {
+                       "description": "The provided tableId was not in correct format."
+                   }
+               }
+           },
+           "delete": {
+               "tags": [
+                   "tables"
+               ],
+               "summary": "Remove a table from the paused list",
+               "description": "Allows an administrator to remove a specific table from the paused list, which prevents the table from being scheduled. This operation will make the table available for scheduling again.",
+               "operationId": "removePausedTable",
+               "parameters": [
+                   {
+                       "name": "tableId",
+                       "in": "path",
+                       "required": true,
+                       "schema": {
+                           "type": "string"
+                       },
+                       "example": "hive.default.t1"
+                   }
+               ],
+               "responses": {
+                   "200": {
+                       "description": "The paused table has been successfully removed and is now available for scheduling.",
+                       "content": {
+                           "application/json": {
+                               "schema": {
+                                   "type": "object",
+                                   "properties": {
+                                       "status": {
+                                           "type": "integer",
+                                           "example": 200
+                                       },
+                                       "result": {
+                                           "type": "string",
+                                           "example": null
+                                       },
+                                       "message": {
+                                           "type": "string",
+                                           "example": "hive.default.t1 removed successfully"
+                                       }
+                                   }
+                               }
+                           }
+                       }
+                   },
+                   "404": {
+                       "description": "The provided tableId was not found in the paused list."
+                   }
+               }
+           }
+       },
+       "/tables/{tableId}/policies": {
+           "get": {
+               "tags": [
+                   "tables"
+               ],
+               "summary": "List policies associated to a table",
+               "description": "Fetches the policy names associated to a table",
+               "operationId": "fetchPolicies_1",
+               "parameters": [
+                   {
+                       "name": "tableId",
+                       "in": "path",
+                       "required": true,
+                       "schema": {
+                           "type": "string"
+                       }
+                   }
+               ],
+               "responses": {
+                   "200": {
+                       "description": "Policies name fetch is successful",
+                       "content": {
+                           "application/json": {
+                               "schema": {
+                                   "type": "object",
+                                   "properties": {
+                                       "result": {
+                                           "type": "string"
+                                       }
+                                   }
+                               }
+                           }
+                       }
+                   },
+                   "404": {
+                       "description": "No policies associated to table"
+                   }
+               }
+           }
+       },
+       "/tables/{tableId}/stats": {
+           "get": {
+               "tags": [
+                   "tables"
+               ],
+               "summary": "Query table statistics",
+               "description": "Fetches the statistics names associated to a table",
+               "operationId": "fetchStats",
+               "parameters": [
+                   {
+                       "name": "tableId",
+                       "in": "path",
+                       "required": true,
+                       "schema": {
+                           "type": "string"
+                       }
+                   },
+                   {
+                       "name": "force",
+                       "in": "query",
+                       "schema": {
+                           "type": "boolean"
+                       }
+                   }
+               ],
+               "responses": {
+                   "200": {
+                       "description": "Table statistics fetch is successful",
+                       "content": {
+                           "application/json": {
+                               "schema": {
+                                   "type": "object",
+                                   "properties": {
+                                       "result": {
+                                           "$ref": "#/components/schemas/IcebergTableStats"
+                                       }
+                                   }
+                               }
+                           }
+                       }
+                   },
+                   "404": {
+                       "description": "No statistics associated to table"
+                   }
+               }
+           }
+       },
+       "/tables/paused": {
+           "get": {
+               "tags": [
+                   "tables"
+               ],
+               "summary": "Get all paused tables",
+               "description": "Retrieves a list of all tables that have been paused from scheduling due to continuous failures.",
+               "operationId": "getPausedTables",
+               "responses": {
+                   "200": {
+                       "content": {
+                           "application/json": {
+                               "examples": {
+                                   "Paused Tables Response": {
+                                       "description": "Paused Tables Response",
+                                       "value": "{\n  \"status\": 200,\n  \"result\": [\n      \"table1\",\n      \"table2\",\n      \"table3\"\n    ]\n  \"message\": \"Paused tables\"\n}"
+                                   }
+                               }
+                           }
+                       }
+                   }
+               }
+           },
+           "delete": {
+               "tags": [
+                   "tables"
+               ],
+               "summary": "Remove all tables from the paused list",
+               "description": "Allows an administrator to remove all tables that were previously paused from being scheduled.",
+               "operationId": "removeAllPausedTables",
+               "responses": {
+                   "200": {
+                       "description": "removed all entries, return number of entries removed in result",
+                       "content": {
+                           "application/json": {
+                               "schema": {
+                                   "type": "object",
+                                   "properties": {
+                                       "status": {
+                                           "type": "integer",
+                                           "example": 200
+                                       },
+                                       "result": {
+                                           "type": "integer",
+                                           "example": 10
+                                       },
+                                       "message": {
+                                           "type": "string",
+                                           "example": "Removed all paused tables"
+                                       }
+                                   }
+                               }
+                           }
+                       }
+                   }
+               }
+           }
+       },
+       "/tasks/ingestlog": {
+           "get": {
+               "tags": [
+                   "task details"
+               ],
+               "summary": "Fetch the event ingestion metadata",
+               "description": "Fetch the event ingestion metadata",
+               "operationId": "fetchIngestionMetadata",
+               "responses": {
+                   "200": {
+                       "description": "Successful response",
+                       "content": {
+                           "application/json": {
+                               "schema": {
+                                   "$ref": "#/components/schemas/EventIngestionMetadata"
+                               }
+                           }
+                       }
+                   },
+                   "404": {
+                       "description": "No metadata found"
+                   },
+                   "500": {
+                       "description": "Exceptions"
+                   }
+               }
+           },
+           "post": {
+               "tags": [
+                   "task details"
+               ],
+               "summary": "Trigger the event ingestion",
+               "description": "Triggers livy job insert event log to iceberg table",
+               "operationId": "triggerEventIngestion",
+               "responses": {
+                   "200": {
+                       "description": "Successful response",
+                       "content": {
+                           "application/json": {
+                               "schema": {
+                                   "$ref": "#/components/schemas/EventIngestionMetadata"
+                               }
+                           }
+                       }
+                   },
+                   "500": {
+                       "description": "Duplicate ingestion request"
+                   }
+               }
+           }
+       },
+       "/tasks/id/{id}": {
+           "get": {
+               "tags": [
+                   "task details"
+               ],
+               "summary": "Retrieve task by ID",
+               "description": "Retrieves the task metadata by the provided task ID.",
+               "operationId": "getById",
+               "parameters": [
+                   {
+                       "name": "id",
+                       "in": "path",
+                       "description": "Task ID",
+                       "required": true,
+                       "schema": {
+                           "type": "string"
+                       }
+                   }
+               ],
+               "responses": {
+                   "200": {
+                       "description": "Successful response with",
+                       "content": {
+                           "application/json": {
+                               "schema": {
+                                   "$ref": "#/components/schemas/TaskMetadata"
+                               }
+                           }
+                       }
+                   },
+                   "404": {
+                       "description": "If task metadata is not found"
+                   },
+                   "500": {
+                       "description": "Internal server error, persistence error"
+                   }
+               }
+           }
+       },
+       "/tasks": {
+           "get": {
+               "tags": [
+                   "task details"
+               ],
+               "summary": "Retrieve recent tasks",
+               "description": "Retrieves a list of recent tasks based on the policy, table and status",
+               "operationId": "getRecentTasks",
+               "parameters": [
+                   {
+                       "name": "policy",
+                       "in": "query",
+                       "description": "Policy name",
+                       "schema": {
+                           "type": "string"
+                       }
+                   },
+                   {
+                       "name": "table",
+                       "in": "query",
+                       "description": "Table name",
+                       "schema": {
+                           "type": "string"
+                       }
+                   },
+                   {
+                       "name": "status",
+                       "in": "query",
+                       "description": "Task status",
+                       "schema": {
+                           "type": "string",
+                           "enum": [
+                               "INIT",
+                               "SUBMITTED",
+                               "COMPLETED",
+                               "FAILED"
+                           ]
+                       }
+                   },
+                   {
+                       "name": "sortBy",
+                       "in": "query",
+                       "description": "Sort By",
+                       "schema": {
+                           "type": "string",
+                           "enum": [
+                               "ASC",
+                               "DESC"
+                           ],
+                           "default": "DESC"
+                       }
+                   },
+                   {
+                       "name": "count",
+                       "in": "query",
+                       "description": "Maximum number of tasks to retrieve",
+                       "schema": {
+                           "type": "integer",
+                           "format": "int32",
+                           "default": 10
+                       }
+                   }
+               ],
+               "responses": {
+                   "200": {
+                       "description": "Successful response",
+                       "content": {
+                           "application/json": {
+                               "schema": {
+                                   "type": "object",
+                                   "properties": {
+                                       "result": {
+                                           "$ref": "#/components/schemas/TaskMetadata"
+                                       }
+                                   }
+                               }
+                           }
+                       }
+                   },
+                   "404": {
+                       "description": "No recent tasks found"
+                   },
+                   "500": {
+                       "description": "Internal server error, persistence error"
+                   }
+               }
+           }
+       },
+       "/tasks/policies/{policyName}/tables/{tableName}/submitted": {
+           "get": {
+               "tags": [
+                   "task details"
+               ],
+               "summary": "Retrieve submitted task",
+               "description": "Retrieves the submitted task based on the provided policy and table name.",
+               "operationId": "getSubmittedTask",
+               "parameters": [
+                   {
+                       "name": "policyName",
+                       "in": "path",
+                       "description": "Policy name",
+                       "required": true,
+                       "schema": {
+                           "type": "string"
+                       }
+                   },
+                   {
+                       "name": "tableName",
+                       "in": "path",
+                       "description": "Table name",
+                       "required": true,
+                       "schema": {
+                           "type": "string"
+                       }
+                   }
+               ],
+               "responses": {
+                   "200": {
+                       "description": "Successful response",
+                       "content": {
+                           "application/json": {
+                               "schema": {
+                                   "$ref": "#/components/schemas/TaskMetadata"
+                               }
+                           }
+                       }
+                   },
+                   "404": {
+                       "description": "No submitted tasks found"
+                   },
+                   "500": {
+                       "description": "Internal server error, persistence error"
+                   }
+               }
+           }
        }
-    ],
-    "paths":{
-       "/namespaces/{namespace}/policies":{
-          "get":{
-             "tags":[
-                "namespaces"
-             ],
-             "summary":"List policies associated to at-least one of the tables of a namespace",
-             "description":"Fetches the policy names associated to at-least one tables of a namespace",
-             "operationId":"fetchPolicies",
-             "parameters":[
-                {
-                   "name":"namespace",
-                   "in":"path",
-                   "required":true,
-                   "schema":{
-                      "type":"string"
+   },
+   "components": {
+       "schemas": {
+           "LoginRequest": {
+               "type": "object",
+               "properties": {
+                   "clientId": {
+                       "type": "string"
+                   },
+                   "clientSecret": {
+                       "type": "string"
                    }
-                }
-             ],
-             "responses":{
-                "200":{
-                   "description":"Policies name fetch is successful",
-                   "content":{
-                      "application/json":{
-                         "schema":{
-                            "type":"object",
-                            "properties":{
-                               "result":{
-                                  "type":"string"
+               }
+           },
+           "TablePath": {
+               "type": "object",
+               "properties": {
+                   "catalog": {
+                       "type": "string"
+                   },
+                   "namespace": {
+                       "type": "string"
+                   },
+                   "table": {
+                       "type": "string"
+                   }
+               }
+           },
+           "TaskMetadata": {
+               "type": "object",
+               "properties": {
+                   "taskId": {
+                       "type": "string",
+                       "format": "uuid",
+                       "example": "4cd03968-5a58-5474-8e03-2513cddfbe31"
+                   },
+                   "createdAt": {
+                       "type": "integer",
+                       "format": "int64",
+                       "example": 1711667940626
+                   },
+                   "createdBy": {
+                       "type": "integer",
+                       "format": "int64"
+                   },
+                   "tablePath": {
+                       "$ref": "#/components/schemas/TablePath"
+                   },
+                   "policyName": {
+                       "type": "string",
+                       "example": "snapshot-daily"
+                   },
+                   "policyVersion": {
+                       "type": "string",
+                       "format": "uuid",
+                       "example": "02dba0e3-064d-5246-9576-af21aebac5b0"
+                   },
+                   "currentAction": {
+                       "type": "string",
+                       "enum": [
+                           "DELETE_ORPHAN_FILES",
+                           "DELETE_REACHABLE_FILES",
+                           "EXPIRE_SNAPSHOT",
+                           "REWRITE_DATA_FILES",
+                           "REWRITE_MANIFEST",
+                           "REWRITE_POSITION_DELETE_FILES",
+                           "MIGRATE_TABLE",
+                           "SNAPSHOT_TABLE",
+                           "NOOP"
+                       ]
+                   },
+                   "actions": {
+                       "type": "object",
+                       "additionalProperties": {
+                           "type": "object",
+                           "additionalProperties": {
+                               "type": "object",
+                               "example": {
+                                   "EXPIRE_SNAPSHOT": {
+                                       "status": "Failed"
+                                   }
                                }
-                            }
-                         },
-                         "examples":{
-                            "Active Namespaces Response":{
-                               "description":"Active Namespaces Response",
-                               "value":{
-                                  "status":200,
-                                  "action":"READ",
-                                  "policies":[
-                                     "p1"
-                                  ],
-                                  "message":"Namespace : namespaces"
+                           },
+                           "example": {
+                               "EXPIRE_SNAPSHOT": {
+                                   "status": "Failed"
                                }
-                            }
-                         }
-                      }
+                           }
+                       },
+                       "example": {
+                           "EXPIRE_SNAPSHOT": {
+                               "status": "Failed"
+                           }
+                       }
+                   },
+                   "status": {
+                       "type": "string",
+                       "enum": [
+                           "INIT",
+                           "SUBMITTED",
+                           "COMPLETED",
+                           "FAILED"
+                       ]
+                   },
+                   "namespace": {
+                       "type": "string"
+                   },
+                   "tableName": {
+                       "type": "string"
+                   },
+                   "catalogName": {
+                       "type": "string"
                    }
-                },
-                "404":{
-                   "description":"Namespace not found or not declared",
-                   "content":{
-                      "application/json":{
-                         "examples":{
-                            "Namespace not found Response":{
-                               "description":"Namespace not found Response",
-                               "value":{
-                                  "status":404,
-                                  "action":"ERROR",
-                                  "message":"Namespace : namespaces"
+               }
+           },
+           "PolicyDetail": {
+               "type": "object",
+               "properties": {
+                   "uuid": {
+                       "type": "string",
+                       "example": "02dba0e3-064d-5246-9576-af21aebac5b0"
+                   },
+                   "scriptName": {
+                       "type": "string",
+                       "example": "snapshots-daily.jexl"
+                   },
+                   "constants": {
+                       "type": "object",
+                       "additionalProperties": {
+                           "type": "object",
+                           "example": {
+                               "actions": {
+                                   "expireSnapshots": {
+                                       "expireOlderThan": 5000,
+                                       "retainLast": 50
+                                   },
+                                   "deleteOrphanFiles": {
+                                       "olderThan": 500,
+                                       "location": "hdfs://default.com",
+                                       "tag": "default"
+                                   }
+                               },
+                               "array-prop": [
+                                   5,
+                                   6
+                               ]
+                           }
+                       },
+                       "example": {
+                           "actions": {
+                               "expireSnapshots": {
+                                   "expireOlderThan": 5000,
+                                   "retainLast": 50
+                               },
+                               "deleteOrphanFiles": {
+                                   "olderThan": 500,
+                                   "location": "hdfs://default.com",
+                                   "tag": "default"
                                }
-                            }
-                         }
-                      }
+                           },
+                           "array-prop": [
+                               5,
+                               6
+                           ]
+                       }
                    }
-                }
-             }
-          }
-       },
-       "/namespaces/active":{
-          "get":{
-             "tags":[
-                "namespaces"
-             ],
-             "summary":"Get all active namespaces",
-             "description":"Retrieves a list of all active namespaces.",
-             "operationId":"getAllNamespaces",
-             "responses":{
-                "200":{
-                   "content":{
-                      "application/json":{
-                         "examples":{
-                            "Active Namespaces Response":{
-                               "description":"Active Namespaces Response",
-                               "value":{
-                                  "status":200,
-                                  "action":"READ",
-                                  "result":[
-                                     "test",
-                                     "production"
-                                  ],
-                                  "message":"Active namespaces"
-                               }
-                            }
-                         }
-                      }
+               }
+           },
+           "Policy": {
+               "type": "object",
+               "properties": {
+                   "name": {
+                       "type": "string"
+                   },
+                   "cron": {
+                       "type": "string"
+                   },
+                   "script": {
+                       "type": "string"
+                   },
+                   "version": {
+                       "type": "string",
+                       "format": "uuid"
+                   },
+                   "scriptPath": {
+                       "type": "string"
+                   },
+                   "scriptConstants": {
+                       "type": "object",
+                       "additionalProperties": {
+                           "type": "object"
+                       }
                    }
-                }
-             }
-          }
-       },
-       "/namespaces":{
-          "get":{
-             "tags":[
-                "namespaces"
-             ],
-             "summary":"Get all known namespaces",
-             "description":"Retrieves a list of all namespaces.",
-             "operationId":"getAllNamespaces_1",
-             "parameters":[
-                {
-                   "name":"fetch",
-                   "in":"query",
-                   "description":"If true fetch all namespaces in catalog else fetch namespaces which are declared to be maintained",
-                   "schema":{
-                      "type":"boolean"
+               }
+           },
+           "IcebergTableStats": {
+               "type": "object",
+               "properties": {
+                   "numberOfSnapshots": {
+                       "type": "integer",
+                       "format": "int64"
                    },
-                   "example":true
-                }
-             ],
-             "responses":{
-                "200":{
-                   "content":{
-                      "application/json":{
-                         "examples":{
-                            "List Namespace Response":{
-                               "description":"List Namespace Response",
-                               "value":{
-                                  "status":"200",
-                                  "action":"READ",
-                                  "result":[
-                                     "test",
-                                     "production"
-                                  ],
-                                  "message":"All namespaces"
-                               }
-                            }
-                         }
-                      }
+                   "currentSequenceNumber": {
+                       "type": "integer",
+                       "format": "int64"
+                   },
+                   "firstSequenceNumber": {
+                       "type": "integer",
+                       "format": "int64"
+                   },
+                   "currentSnapshotTimestamp": {
+                       "type": "integer",
+                       "format": "int64"
+                   },
+                   "oldestSnapshotTimestamp": {
+                       "type": "integer",
+                       "format": "int64"
+                   },
+                   "catalogName": {
+                       "type": "string"
+                   },
+                   "tableName": {
+                       "type": "string"
+                   },
+                   "nameSpace": {
+                       "type": "string"
+                   },
+                   "recordTimestamp": {
+                       "type": "integer",
+                       "format": "int64"
+                   },
+                   "manifestFilesCurrentSnapshotCount": {
+                       "type": "integer",
+                       "format": "int64"
+                   },
+                   "manifestFilesCurrentSnapshotSize": {
+                       "type": "integer",
+                       "format": "int64"
+                   },
+                   "dataDeleteFilesCurrentSnapshot": {
+                       "type": "integer",
+                       "format": "int64"
+                   },
+                   "dataDeleteFilesCurrentSnapshotSize": {
+                       "type": "integer",
+                       "format": "int64"
+                   },
+                   "storageOptimizationExpectedAfterCompaction": {
+                       "type": "integer",
+                       "format": "int64"
+                   },
+                   "worstFileCountInPartition": {
+                       "type": "integer",
+                       "format": "int64"
+                   },
+                   "fileCountReductionExpectedAfterCompaction": {
+                       "type": "integer",
+                       "format": "int64"
+                   },
+                   "numberOfObjectsInDirectory": {
+                       "type": "integer",
+                       "format": "int64"
+                   },
+                   "totalDirectorySizeInBytes": {
+                       "type": "integer",
+                       "format": "int64"
+                   },
+                   "dataDeleteFilesAllSnapshotsCount": {
+                       "type": "integer",
+                       "format": "int64"
+                   },
+                   "dataDeleteFilesAllSnapshotsSize": {
+                       "type": "integer",
+                       "format": "int64"
+                   },
+                   "manifestFilesAllSnapshotsCount": {
+                       "type": "integer",
+                       "format": "int64"
+                   },
+                   "manifestFilesAllSnapshotsSize": {
+                       "type": "integer",
+                       "format": "int64"
+                   },
+                   "sequenceNumberDelta": {
+                       "type": "integer",
+                       "format": "int64"
+                   },
+                   "snapshotTimestampDelta": {
+                       "type": "integer",
+                       "format": "int64"
                    }
-                }
-             }
-          }
-       },
-       "components":{
-          "schemas":{
-             "LoginRequest":{
-                "type":"object",
-                "properties":{
-                   "clientId":{
-                      "type":"string"
+               }
+           },
+           "EventIngestionMetadata": {
+               "type": "object",
+               "properties": {
+                   "ingestionId": {
+                       "type": "string"
                    },
-                   "clientSecret":{
-                      "type":"string"
+                   "startedAt": {
+                       "type": "string"
+                   },
+                   "finishedAt": {
+                       "type": "string"
+                   },
+                   "status": {
+                       "type": "string",
+                       "enum": [
+                           "IN_PROGRESS",
+                           "COMPLETED",
+                           "FAILED"
+                       ]
+                   },
+                   "message": {
+                       "type": "string"
+                   },
+                   "currentFileIndex": {
+                       "type": "integer",
+                       "format": "int32"
+                   },
+                   "currentFileRow": {
+                       "type": "integer",
+                       "format": "int32"
+                   },
+                   "ingestedRecordCount": {
+                       "type": "integer",
+                       "format": "int64"
                    }
-                }
-             },
-             "PolicyAssociationDto":{
-                "type":"object",
-                "properties":{
-                   "associations":{
-                      "type":"array",
-                      "items":{
-                         "type":"string"
-                      }
-                   }
-                }
-             },
-             "FormDataContentDisposition":{
-                "type":"object",
-                "properties":{
-                   "type":{
-                      "type":"string"
-                   },
-                   "parameters":{
-                      "type":"object",
-                      "additionalProperties":{
-                         "type":"string"
-                      }
-                   },
-                   "fileName":{
-                      "type":"string"
-                   },
-                   "creationDate":{
-                      "type":"string",
-                      "format":"date-time"
-                   },
-                   "modificationDate":{
-                      "type":"string",
-                      "format":"date-time"
-                   },
-                   "readDate":{
-                      "type":"string",
-                      "format":"date-time"
-                   },
-                   "size":{
-                      "type":"integer",
-                      "format":"int64"
-                   },
-                   "name":{
-                      "type":"string"
-                   }
-                }
-             },
-             "ResourceUploadDto":{
-                "type":"object",
-                "properties":{
-                   "script":{
-                      "type":"string"
-                   },
-                   "constants":{
-                      "type":"string"
-                   }
-                }
-             },
-             "BodyPart":{
-                "type":"object",
-                "properties":{
-                   "contentDisposition":{
-                      "$ref":"#/components/schemas/ContentDisposition"
-                   },
-                   "entity":{
-                      "type":"object"
-                   },
-                   "headers":{
-                      "type":"object",
-                      "additionalProperties":{
-                         "type":"array",
-                         "items":{
-                            "type":"string"
-                         }
-                      }
-                   },
-                   "mediaType":{
-                      "type":"object",
-                      "properties":{
-                         "type":{
-                            "type":"string"
-                         },
-                         "subtype":{
-                            "type":"string"
-                         },
-                         "parameters":{
-                            "type":"object",
-                            "additionalProperties":{
-                               "type":"string"
-                            }
-                         },
-                         "wildcardType":{
-                            "type":"boolean"
-                         },
-                         "wildcardSubtype":{
-                            "type":"boolean"
-                         }
-                      }
-                   },
-                   "messageBodyWorkers":{
-                      "$ref":"#/components/schemas/MessageBodyWorkers"
-                   },
-                   "parent":{
-                      "$ref":"#/components/schemas/MultiPart"
-                   },
-                   "providers":{
-                      "type":"object"
-                   },
-                   "parameterizedHeaders":{
-                      "type":"object",
-                      "additionalProperties":{
-                         "type":"array",
-                         "items":{
-                            "$ref":"#/components/schemas/ParameterizedHeader"
-                         }
-                      }
-                   }
-                }
-             },
-             "ContentDisposition":{
-                "type":"object",
-                "properties":{
-                   "type":{
-                      "type":"string"
-                   },
-                   "parameters":{
-                      "type":"object",
-                      "additionalProperties":{
-                         "type":"string"
-                      }
-                   },
-                   "fileName":{
-                      "type":"string"
-                   },
-                   "creationDate":{
-                      "type":"string",
-                      "format":"date-time"
-                   },
-                   "modificationDate":{
-                      "type":"string",
-                      "format":"date-time"
-                   },
-                   "readDate":{
-                      "type":"string",
-                      "format":"date-time"
-                   },
-                   "size":{
-                      "type":"integer",
-                      "format":"int64"
-                   }
-                }
-             },
-             "FormDataBodyPart":{
-                "type":"object",
-                "properties":{
-                   "contentDisposition":{
-                      "$ref":"#/components/schemas/ContentDisposition"
-                   },
-                   "entity":{
-                      "type":"object"
-                   },
-                   "headers":{
-                      "type":"object",
-                      "additionalProperties":{
-                         "type":"array",
-                         "items":{
-                            "type":"string"
-                         }
-                      }
-                   },
-                   "mediaType":{
-                      "type":"object",
-                      "properties":{
-                         "type":{
-                            "type":"string"
-                         },
-                         "subtype":{
-                            "type":"string"
-                         },
-                         "parameters":{
-                            "type":"object",
-                            "additionalProperties":{
-                               "type":"string"
-                            }
-                         },
-                         "wildcardType":{
-                            "type":"boolean"
-                         },
-                         "wildcardSubtype":{
-                            "type":"boolean"
-                         }
-                      }
-                   },
-                   "messageBodyWorkers":{
-                      "$ref":"#/components/schemas/MessageBodyWorkers"
-                   },
-                   "parent":{
-                      "$ref":"#/components/schemas/MultiPart"
-                   },
-                   "providers":{
-                      "type":"object"
-                   },
-                   "simple":{
-                      "type":"boolean"
-                   },
-                   "formDataContentDisposition":{
-                      "$ref":"#/components/schemas/FormDataContentDisposition"
-                   },
-                   "name":{
-                      "type":"string"
-                   },
-                   "value":{
-                      "type":"string"
-                   },
-                   "parameterizedHeaders":{
-                      "type":"object",
-                      "additionalProperties":{
-                         "type":"array",
-                         "items":{
-                            "$ref":"#/components/schemas/ParameterizedHeader"
-                         }
-                      }
-                   }
-                }
-             },
-             "FormDataMultiPart":{
-                "type":"object",
-                "properties":{
-                   "contentDisposition":{
-                      "$ref":"#/components/schemas/ContentDisposition"
-                   },
-                   "entity":{
-                      "type":"object"
-                   },
-                   "headers":{
-                      "type":"object",
-                      "additionalProperties":{
-                         "type":"array",
-                         "items":{
-                            "type":"string"
-                         }
-                      }
-                   },
-                   "mediaType":{
-                      "type":"object",
-                      "properties":{
-                         "type":{
-                            "type":"string"
-                         },
-                         "subtype":{
-                            "type":"string"
-                         },
-                         "parameters":{
-                            "type":"object",
-                            "additionalProperties":{
-                               "type":"string"
-                            }
-                         },
-                         "wildcardType":{
-                            "type":"boolean"
-                         },
-                         "wildcardSubtype":{
-                            "type":"boolean"
-                         }
-                      }
-                   },
-                   "messageBodyWorkers":{
-                      "$ref":"#/components/schemas/MessageBodyWorkers"
-                   },
-                   "parent":{
-                      "$ref":"#/components/schemas/MultiPart"
-                   },
-                   "providers":{
-                      "type":"object"
-                   },
-                   "bodyParts":{
-                      "type":"array",
-                      "items":{
-                         "$ref":"#/components/schemas/BodyPart"
-                      }
-                   },
-                   "fields":{
-                      "type":"object",
-                      "additionalProperties":{
-                         "type":"array",
-                         "items":{
-                            "$ref":"#/components/schemas/FormDataBodyPart"
-                         }
-                      }
-                   },
-                   "parameterizedHeaders":{
-                      "type":"object",
-                      "additionalProperties":{
-                         "type":"array",
-                         "items":{
-                            "$ref":"#/components/schemas/ParameterizedHeader"
-                         }
-                      }
-                   }
-                }
-             },
-             "MessageBodyWorkers":{
-                "type":"object"
-             },
-             "MultiPart":{
-                "type":"object",
-                "properties":{
-                   "contentDisposition":{
-                      "$ref":"#/components/schemas/ContentDisposition"
-                   },
-                   "entity":{
-                      "type":"object"
-                   },
-                   "headers":{
-                      "type":"object",
-                      "additionalProperties":{
-                         "type":"array",
-                         "items":{
-                            "type":"string"
-                         }
-                      }
-                   },
-                   "mediaType":{
-                      "type":"object",
-                      "properties":{
-                         "type":{
-                            "type":"string"
-                         },
-                         "subtype":{
-                            "type":"string"
-                         },
-                         "parameters":{
-                            "type":"object",
-                            "additionalProperties":{
-                               "type":"string"
-                            }
-                         },
-                         "wildcardType":{
-                            "type":"boolean"
-                         },
-                         "wildcardSubtype":{
-                            "type":"boolean"
-                         }
-                      }
-                   },
-                   "messageBodyWorkers":{
-                      "$ref":"#/components/schemas/MessageBodyWorkers"
-                   },
-                   "parent":{
-                      "$ref":"#/components/schemas/MultiPart"
-                   },
-                   "providers":{
-                      "type":"object"
-                   },
-                   "bodyParts":{
-                      "type":"array",
-                      "items":{
-                         "$ref":"#/components/schemas/BodyPart"
-                      }
-                   },
-                   "parameterizedHeaders":{
-                      "type":"object",
-                      "additionalProperties":{
-                         "type":"array",
-                         "items":{
-                            "$ref":"#/components/schemas/ParameterizedHeader"
-                         }
-                      }
-                   }
-                }
-             },
-             "ParameterizedHeader":{
-                "type":"object",
-                "properties":{
-                   "value":{
-                      "type":"string"
-                   },
-                   "parameters":{
-                      "type":"object",
-                      "additionalProperties":{
-                         "type":"string"
-                      }
-                   }
-                }
-             },
-             "PolicyConstants":{
-                "type":"object",
-                "properties":{
-                   "expireSnapshot":{
-                      "type":"object",
-                      "additionalProperties":{
-                         "type":"object"
-                      }
-                   },
-                   "rewriteDataFiles":{
-                      "type":"object",
-                      "additionalProperties":{
-                         "type":"object"
-                      }
-                   },
-                   "rewriteManifest":{
-                      "type":"object",
-                      "additionalProperties":{
-                         "type":"object"
-                      }
-                   },
-                   "deleteOrphanFiles":{
-                      "type":"object",
-                      "additionalProperties":{
-                         "type":"object"
-                      }
-                   },
-                   "rewritePositionDelete":{
-                      "type":"object",
-                      "additionalProperties":{
-                         "type":"object"
-                      }
-                   },
-                   "cron":{
-                      "type":"string"
-                   },
-                   "timeZone":{
-                      "type":"string"
-                   },
-                   "label":{
-                      "type":"string"
-                   },
-                   "script":{
-                      "type":"string"
-                   },
-                   "description":{
-                      "type":"string"
-                   },
-                   "extra":{
-                      "type":"object",
-                      "additionalProperties":{
-                         "type":"object"
-                      }
-                   }
-                },
-                "example":{
-                   "actions":{
-                      "expireSnapshots":{
-                         "expireOlderThan":5000,
-                         "retainLast":50
-                      },
-                      "deleteOrphanFiles":{
-                         "olderThan":500,
-                         "location":"hdfs://default.com",
-                         "tag":"default"
-                      }
-                   },
-                   "array-prop":[
-                      5,
-                      6
-                   ]
-                }
-             },
-             "PolicyDetail":{
-                "type":"object",
-                "properties":{
-                   "uuid":{
-                      "type":"string",
-                      "example":"02dba0e3-064d-5246-9576-af21aebac5b0"
-                   },
-                   "scriptName":{
-                      "type":"string",
-                      "example":"snapshots-daily.jexl"
-                   },
-                   "constants":{
-                      "$ref":"#/components/schemas/PolicyConstants"
-                   }
-                }
-             },
-             "AfterCompaction":{
-                "type":"object"
-             },
-             "CurrentSnapshot":{
-                "type":"object",
-                "properties":{
-                   "dataDeleteFilesCount":{
-                      "type":"integer",
-                      "format":"int64"
-                   },
-                   "manifestFilesCount":{
-                      "type":"integer",
-                      "format":"int64"
-                   }
-                }
-             },
-             "IcebergTableStats":{
-                "type":"object",
-                "properties":{
-                   "numberOfSnapshots":{
-                      "type":"integer",
-                      "format":"int64"
-                   },
-                   "currentSequenceNumber":{
-                      "type":"integer",
-                      "format":"int64"
-                   },
-                   "firstSequenceNumber":{
-                      "type":"integer",
-                      "format":"int64"
-                   },
-                   "currentSnapshotTimestamp":{
-                      "type":"integer",
-                      "format":"int64"
-                   },
-                   "oldestSnapshotTimestamp":{
-                      "type":"integer",
-                      "format":"int64"
-                   },
-                   "snapshotId":{
-                      "type":"integer",
-                      "format":"int64"
-                   },
-                   "catalogName":{
-                      "type":"string"
-                   },
-                   "tableName":{
-                      "type":"string"
-                   },
-                   "nameSpace":{
-                      "type":"string"
-                   },
-                   "recordTimestamp":{
-                      "type":"integer",
-                      "format":"int64"
-                   },
-                   "currentSnapshotManifestFilesCount":{
-                      "type":"integer",
-                      "format":"int64"
-                   },
-                   "currentSnapshotDataDeleteFilesCount":{
-                      "type":"integer",
-                      "format":"int64"
-                   },
-                   "directoryObjectsCount":{
-                      "type":"integer",
-                      "format":"int64"
-                   },
-                   "directoryObjectsSize":{
-                      "type":"integer",
-                      "format":"int64"
-                   },
-                   "partitionStats":{
-                      "type":"object",
-                      "additionalProperties":{
-                         "$ref":"#/components/schemas/Partition"
-                      }
-                   },
-                   "partitionCount":{
-                      "type":"integer",
-                      "format":"int64"
-                   },
-                   "currentSnapshot":{
-                      "$ref":"#/components/schemas/CurrentSnapshot"
-                   },
-                   "afterCompaction":{
-                      "$ref":"#/components/schemas/AfterCompaction"
-                   },
-                   "sequenceNumberDelta":{
-                      "type":"integer",
-                      "format":"int64"
-                   },
-                   "snapshotTimestampDelta":{
-                      "type":"integer",
-                      "format":"int64"
-                   }
-                }
-             },
-             "Partition":{
-                "type":"object",
-                "properties":{
-                   "partitionKey":{
-                      "type":"string"
-                   },
-                   "totalDataFiles":{
-                      "type":"integer",
-                      "format":"int64"
-                   },
-                   "totalFileSize":{
-                      "type":"integer",
-                      "format":"int64"
-                   },
-                   "totalDeleteFiles":{
-                      "type":"integer",
-                      "format":"int64"
-                   }
-                }
-             },
-             "TableErrorHandler":{
-                "type":"object",
-                "properties":{
-                   "defaultPenaltyTime":{
-                      "type":"integer",
-                      "format":"int64"
-                   },
-                   "defaultForgetTimeSinceLastReport":{
-                      "type":"integer",
-                      "format":"int64"
-                   },
-                   "defaultTolerance":{
-                      "type":"integer",
-                      "format":"int32"
-                   },
-                   "pausedKeys":{
-                      "type":"array",
-                      "items":{
-                         "$ref":"#/components/schemas/TablePath"
-                      }
-                   }
-                }
-             },
-             "TableIdentifier":{
-                "type":"object"
-             },
-             "TablePath":{
-                "type":"object",
-                "properties":{
-                   "catalog":{
-                      "type":"string"
-                   },
-                   "namespace":{
-                      "type":"string"
-                   },
-                   "table":{
-                      "type":"string"
-                   },
-                   "identifier":{
-                      "$ref":"#/components/schemas/TableIdentifier"
-                   }
-                }
-             },
-             "EventIngestionMetadata":{
-                "type":"object",
-                "properties":{
-                   "ingestionId":{
-                      "type":"string"
-                   },
-                   "startedAt":{
-                      "type":"string"
-                   },
-                   "finishedAt":{
-                      "type":"string"
-                   },
-                   "status":{
-                      "type":"string",
-                      "enum":[
-                         "IN_PROGRESS",
-                         "COMPLETED",
-                         "FAILED"
-                      ]
-                   },
-                   "message":{
-                      "type":"string"
-                   },
-                   "currentFileIndex":{
-                      "type":"integer",
-                      "format":"int32"
-                   },
-                   "currentFileRow":{
-                      "type":"integer",
-                      "format":"int32"
-                   },
-                   "ingestedRecordCount":{
-                      "type":"integer",
-                      "format":"int64"
-                   }
-                }
-             },
-             "TaskMetadata":{
-                "type":"object",
-                "properties":{
-                   "taskId":{
-                      "type":"string",
-                      "format":"uuid",
-                      "example":"4cd03968-5a58-5474-8e03-2513cddfbe31"
-                   },
-                   "createdAt":{
-                      "type":"integer",
-                      "format":"int64"
-                   },
-                   "createdBy":{
-                      "type":"integer",
-                      "format":"int64"
-                   },
-                   "tablePath":{
-                      "$ref":"#/components/schemas/TablePath"
-                   },
-                   "policyName":{
-                      "type":"string",
-                      "example":"snapshot-daily"
-                   },
-                   "policyVersion":{
-                      "type":"string",
-                      "format":"uuid",
-                      "example":"02dba0e3-064d-5246-9576-af21aebac5b0"
-                   },
-                   "currentAction":{
-                      "type":"string",
-                      "enum":[
-                         "DELETE_ORPHAN_FILES",
-                         "DELETE_REACHABLE_FILES",
-                         "EXPIRE_SNAPSHOT",
-                         "REWRITE_DATA_FILES",
-                         "REWRITE_MANIFEST",
-                         "REWRITE_POSITION_DELETE_FILES",
-                         "MIGRATE_TABLE",
-                         "SNAPSHOT_TABLE",
-                         "NOOP"
-                      ]
-                   },
-                   "actions":{
-                      "type":"object",
-                      "additionalProperties":{
-                         "type":"object",
-                         "additionalProperties":{
-                            "type":"object",
-                            "example":{
-                               "EXPIRE_SNAPSHOT":{
-                                  "status":"Failed"
-                               }
-                            }
-                         },
-                         "example":{
-                            "EXPIRE_SNAPSHOT":{
-                               "status":"Failed"
-                            }
-                         }
-                      },
-                      "example":{
-                         "EXPIRE_SNAPSHOT":{
-                            "status":"Failed"
-                         }
-                      }
-                   },
-                   "status":{
-                      "type":"string",
-                      "enum":[
-                         "INIT",
-                         "SUBMITTED",
-                         "COMPLETED",
-                         "FAILED"
-                      ]
-                   },
-                   "message":{
-                      "type":"string"
-                   },
-                   "namespace":{
-                      "type":"string"
-                   },
-                   "tableName":{
-                      "type":"string"
-                   },
-                   "catalogName":{
-                      "type":"string"
-                   }
-                }
-             }
-          },
-          "securitySchemes":{
-             "BearerAuth":{
-                "type":"http",
-                "scheme":"bearer",
-                "bearerFormat":"JWT"
-             }
-          }
+               }
+           }
        }
-    }
- }
+   }
+}

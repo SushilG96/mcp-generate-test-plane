@@ -1,0 +1,36 @@
+The Cloudera Lakehouse Optimizer (CLO), also referred to as the DLM (Data Lifecycle Management) service and DLM Policy Manager in the provided document, is an upcoming microservice designed to automate the maintenance and optimization of Iceberg tables within the Cloudera Open Data Lakehouse.
+
+Problem it Solves:
+Manual Table Maintenance Burden: Iceberg tables, while offering ACID compliance, require ongoing maintenance like compaction and snapshot expiration. Manually performing these operations or building custom solutions is a significant burden on customers, diverting resources from value-add activities.
+Performance Degradation: Unoptimized Iceberg tables can suffer from query performance issues and increased storage costs (due to small files or outdated snapshots).
+Lack of Out-of-the-Box Automation: Iceberg currently lacks built-in automation for these critical optimization tasks.
+Solution Overview:
+
+The CLO aims to provide an out-of-the-box, engine-agnostic service with built-in autonomics and self-driving capabilities to address these pain points. It will allow businesses to focus on deriving insights from data rather than managing the underlying infrastructure.
+
+Key Features and Functionalities (as described in the document):
+Automated Table Maintenance:
+Compaction: Automatically compacts data files to optimize storage and query performance.
+Snapshot Expiration: Deletes expired snapshots to free up storage space.
+Orphan File Removal: Removes files that are no longer referenced by any Iceberg snapshot.
+Manifest and Positional Delete File Rewriting: Optimizes metadata files for better performance.
+These actions are triggered based on configurable threshold values defined in policies.
+Policy Management:
+Policy Creation/Editing: Users (Platform Admins, Data Ops/Governance Teams, Data Engineers) can create, edit, enable, and disable DLM policies. These policies will define rules for data retention, deletion, archival, and optimization.
+Hierarchical Policies: The system will support policies at global, database, and table levels, with lower-level policies overwriting upper-level policies, providing granular control.
+API Policy Management: Technical users will have the option to manage policies through APIs.
+Monitoring and Observability:
+DLM Policy Dashboard: Provides a centralized view of DLM policies, including global, database, and table-specific policies.
+Policy Alert Activity: Will provide notifications and alerts for any policy breaches, potential data governance issues, or performance issues, allowing for quick remedial actions.
+Audit Trails and Reporting: Supports comprehensive logging and reporting features to track changes and access historical data for regulatory audits and internal reviews.
+Integration with Observability: Monitoring of Spark jobs (which perform the optimization) will be visible on the Cloudera Observability dashboard, allowing users to view metrics like data read and written for each task and analyze real-time and historical infrastructure, jobs, users, and services.
+Role-Based Access Control: The DLM policy manager will support user roles and permissions to control who can create, modify, or delete policies, ensuring only authorized personnel have these abilities.
+API Integration: A consistent requirement across customers is robust API integration to facilitate seamless interactions with other systems and platforms. The CLO is being designed with REST-based APIs for policy management, access to runtime state for tasks, and historical data access for completed/failed tasks.
+Deployment: The DLM Policy Manager will be hosted in the Hybrid Control Plane to manage DLM policies in both public and private cloud environments. The actual DLM processes will utilize Spark via Cloudera Data Engineering (CDE) in the Data Hub.
+Benefits for Customers:
+Reduced Manual Effort: Automates tedious and time-consuming data maintenance tasks, freeing up data practitioners (data engineers, data architects, data warehouse admins) to focus on higher-value activities like gaining insights from data.
+Improved Query Performance: Optimized tables lead to faster query execution.
+Lower Total Cost of Ownership (TCO): By optimizing storage and reducing manual effort, the CLO helps lower cloud resource spending.
+Enhanced Data Governance and Compliance: Policy management features improve compliance, auditing processes, and data integrity.
+Simplified Operations: Provides a more unified and simpler experience for managing Iceberg tables.
+Increased Operational Efficiency: Streamlines data management processes, leading to overall operational efficiencies.

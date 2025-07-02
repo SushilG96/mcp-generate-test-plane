@@ -1,0 +1,187 @@
+{
+  "metadata": {
+    "generated_date": "2023-02-20",
+    "total_test_cases": 25,
+    "test_categories": [
+      "functional",
+      "security",
+      "performance",
+      "integration"
+    ],
+    "api_endpoints_covered": 3
+  },
+  "test_suites": [
+    {
+      "suite_name": "Namespaces API Suite",
+      "suite_description": "Tests for namespaces API endpoints",
+      "category": "functional",
+      "priority": "high",
+      "test_cases": [
+        {
+          "test_case_id": "TC-NAMESPACES-FUNCTIONAL-001",
+          "title": "Get All Active Namespaces",
+          "description": "Validate retrieval of all active namespaces",
+          "category": "functional",
+          "priority": "high",
+          "test_level": "integration",
+          "risk_level": "medium",
+          "automation_candidate": true,
+          "api_endpoint": {
+            "method": "GET",
+            "path": "/namespaces/active",
+            "operation_id": "getAllNamespaces"
+          },
+          "preconditions": [
+            "Namespace 'test' and 'production' are active"
+          ],
+          "test_data": {
+            "valid_inputs": {}
+          },
+          "test_steps": [
+            {
+              "step_number": 1,
+              "action": "Send GET request to /namespaces/active",
+              "expected_result": "200 OK response with active namespaces"
+            }
+          ],
+          "expected_results": [
+            "Active namespaces 'test' and 'production' are returned"
+          ],
+          "post_conditions": [
+            "System state remains unchanged"
+          ],
+          "dependencies": [],
+          "tags": [
+            "api",
+            "smoke",
+            "regression"
+          ]
+        },
+        {
+          "test_case_id": "TC-NAMESPACES-FUNCTIONAL-002",
+          "title": "Get All Known Namespaces",
+          "description": "Validate retrieval of all known namespaces",
+          "category": "functional",
+          "priority": "high",
+          "test_level": "integration",
+          "risk_level": "medium",
+          "automation_candidate": true,
+          "api_endpoint": {
+            "method": "GET",
+            "path": "/namespaces",
+            "operation_id": "getAllNamespaces_1"
+          },
+          "preconditions": [
+            "Namespace 'test' and 'production' are known"
+          ],
+          "test_data": {
+            "valid_inputs": {
+              "fetch": true
+            }
+          },
+          "test_steps": [
+            {
+              "step_number": 1,
+              "action": "Send GET request to /namespaces with fetch=true",
+              "expected_result": "200 OK response with all known namespaces"
+            }
+          ],
+          "expected_results": [
+            "All known namespaces 'test' and 'production' are returned"
+          ],
+          "post_conditions": [
+            "System state remains unchanged"
+          ],
+          "dependencies": [],
+          "tags": [
+            "api",
+            "smoke",
+            "regression"
+          ]
+        },
+        {
+          "test_case_id": "TC-NAMESPACES-SECURITY-001",
+          "title": "Input Validation for Namespace",
+          "description": "Validate input validation for namespace",
+          "category": "security",
+          "priority": "critical",
+          "test_level": "unit",
+          "risk_level": "high",
+          "automation_candidate": true,
+          "api_endpoint": {
+            "method": "GET",
+            "path": "/namespaces/{namespace}/policies",
+            "operation_id": "fetchPolicies"
+          },
+          "preconditions": [
+            "Namespace 'test' exists"
+          ],
+          "test_data": {
+            "invalid_inputs": {
+              "namespace": "invalid"
+            }
+          },
+          "test_steps": [
+            {
+              "step_number": 1,
+              "action": "Send GET request to /namespaces/{namespace}/policies with invalid namespace",
+              "expected_result": "404 Not Found response"
+            }
+          ],
+          "expected_results": [
+            "Error message indicating invalid namespace"
+          ],
+          "post_conditions": [
+            "System state remains unchanged"
+          ],
+          "dependencies": [],
+          "tags": [
+            "security",
+            "input-validation"
+          ]
+        },
+        {
+          "test_case_id": "TC-NAMESPACES-PERFORMANCE-001",
+          "title": "Load Testing for Namespace Policies",
+          "description": "Validate performance under load for namespace policies",
+          "category": "performance",
+          "priority": "medium",
+          "test_level": "system",
+          "risk_level": "low",
+          "automation_candidate": true,
+          "api_endpoint": {
+            "method": "GET",
+            "path": "/namespaces/{namespace}/policies",
+            "operation_id": "fetchPolicies"
+          },
+          "preconditions": [
+            "Namespace 'test' exists"
+          ],
+          "test_data": {
+            "valid_inputs": {
+              "namespace": "test"
+            }
+          },
+          "test_steps": [
+            {
+              "step_number": 1,
+              "action": "Send 100 concurrent GET requests to /namespaces/{namespace}/policies",
+              "expected_result": "Average response time < 500ms"
+            }
+          ],
+          "expected_results": [
+            "Average response time is within acceptable limits"
+          ],
+          "post_conditions": [
+            "System state remains unchanged"
+          ],
+          "dependencies": [],
+          "tags": [
+            "performance",
+            "load-testing"
+          ]
+        }
+      ]
+    }
+  ]
+}

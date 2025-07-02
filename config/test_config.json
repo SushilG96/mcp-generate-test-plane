@@ -1,0 +1,96 @@
+{
+  "test_generation_config": {
+    "description": "Configuration for test case generation",
+    "version": "1.0",
+    "last_updated": "2024-01-01"
+  },
+  "enabled_test_types": {
+    "functional": {
+      "enabled": true,
+      "description": "Comprehensive functional testing covering positive, negative, and workflow scenarios",
+      "priority": "Essential",
+      "tests": ["FUNC-HAPPY", "FUNC-NEGATIVE", "FUNC-VALIDATION", "FUNC-WORKFLOW", "FUNC-BOUNDARY"]
+    },
+    "security": {
+      "enabled": true,
+      "description": "Security testing including authentication, authorization, and encryption",
+      "priority": "Critical",
+      "tests": ["SEC-AUTH", "SEC-AUTHZ", "SEC-CONTENT", "SEC-ENCRYPTION"]
+    },
+    "error_handling": {
+      "enabled": true,
+      "description": "Error response and invalid input handling",
+      "priority": "High",
+      "tests": ["ERR-NOTFOUND", "ERR-INVALID"]
+    },
+    "edge_cases": {
+      "enabled": false,
+      "description": "Boundary values and edge case scenarios",
+      "priority": "Medium",
+      "tests": ["EDGE-BOUNDARY"]
+    },
+    "performance": {
+      "enabled": false,
+      "description": "Performance testing under various load conditions",
+      "priority": "Medium",
+      "tests": ["PERF-LOAD", "PERF-STRESS", "PERF-SPIKE"]
+    },
+    "reliability": {
+      "enabled": false,
+      "description": "System reliability and resilience testing",
+      "priority": "Medium",
+      "tests": ["RELI-TIMEOUT", "RELI-RETRY"]
+    },
+    "scalability": {
+      "enabled": false,
+      "description": "Concurrent user handling and scaling behavior",
+      "priority": "Low",
+      "tests": ["SCALE-CONCURRENT"]
+    },
+    "compatibility": {
+      "enabled": false,
+      "description": "API version compatibility and backward compatibility",
+      "priority": "Low",
+      "tests": ["COMPAT-VERSIONS"]
+    },
+    "workflow_integration": {
+      "enabled": false,
+      "description": "Intelligent workflow testing based on test plan analysis and API relationships",
+      "priority": "High",
+      "tests": ["WORKFLOW-E2E", "WORKFLOW-SEQUENCE", "WORKFLOW-CRUD", "WORKFLOW-INTEGRATION"]
+    }
+  },
+  "predefined_profiles": {
+    "quick": {
+      "description": "Quick smoke tests for CI/CD (9 tests per endpoint)",
+      "enabled_types": ["functional", "security"]
+    },
+    "comprehensive": {
+      "description": "Full test coverage with workflow intelligence (23 tests per endpoint)",
+      "enabled_types": ["functional", "security", "error_handling", "edge_cases", "performance", "reliability", "scalability", "compatibility", "workflow_integration"]
+    },
+    "security_audit": {
+      "description": "Security-focused testing (12 tests per endpoint)",
+      "enabled_types": ["functional", "security", "error_handling", "edge_cases"]
+    },
+    "performance_testing": {
+      "description": "Performance and reliability focus (11 tests per endpoint)",
+      "enabled_types": ["functional", "performance", "reliability", "scalability"]
+    },
+    "development": {
+      "description": "Basic development testing (7 tests per endpoint)",
+      "enabled_types": ["functional", "error_handling"]
+    },
+    "workflow_focused": {
+      "description": "Intelligent workflow and integration testing (9 tests per endpoint)",
+      "enabled_types": ["functional", "workflow_integration"]
+    }
+  },
+  "current_profile": "quick",
+  "output_settings": {
+    "excel_filename": "test_cases.xlsx",
+    "include_metadata": true,
+    "include_execution_tracking": true,
+    "auto_size_columns": true
+  }
+} 

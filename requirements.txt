@@ -1,10 +1,11 @@
 fastmcp
 asyncio
 pytest
-langchain_groq
 
 mcp_use
 mcp[cli]
-openai
 
-dotenv
+python-dotenv
+pandas
+openpyxl
+xlsxwriter
