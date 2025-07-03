@@ -29,13 +29,16 @@ def read_and_preprocess_files(input_dir: str) -> str:
     
     for file_path in input_path.rglob("*"):
         if file_path.is_file():
+            print(f"🔍 Processing file: {file_path}")
             try:
                 # Skip binary files and common non-text files
                 if file_path.suffix.lower() in ['.pdf', '.jpg', '.jpeg', '.png', '.gif', '.bin', '.exe']:
+                    print(f"⏭️  Skipping binary file: {file_path}")
                     continue
                 
                 # Handle JSON files specially for better formatting
                 if file_path.suffix.lower() == '.json':
+                    print(f"📋 Processing JSON file: {file_path}")
                     with open(file_path, 'r', encoding='utf-8') as file:
                         json_data = json.load(file)
                         # Format JSON nicely for the AI to read
@@ -43,14 +46,19 @@ def read_and_preprocess_files(input_dir: str) -> str:
                         file_content = f"=== JSON FILE: {file_path.relative_to(input_path)} ===\n{formatted_json}\n"
                         combined_content.append(file_content)
                         all_text_content += formatted_json + "\n"
+                        print(f"✅ JSON file processed: {len(formatted_json):,} characters")
                 else:
                     # Handle regular text files
+                    print(f"📄 Processing text file: {file_path}")
                     with open(file_path, 'r', encoding='utf-8') as file:
                         content = file.read().strip()
                         if content:
                             file_content = f"=== FILE: {file_path.relative_to(input_path)} ===\n{content}\n"
                             combined_content.append(file_content)
                             all_text_content += content + "\n"
+                            print(f"✅ Text file processed: {len(content):,} characters")
+                        else:
+                            print(f"⚠️  Text file is empty: {file_path}")
             except (UnicodeDecodeError, PermissionError, json.JSONDecodeError) as e:
                 # Skip files that can't be read as text or invalid JSON
                 print(f"Warning: Could not read file {file_path}: {e}")

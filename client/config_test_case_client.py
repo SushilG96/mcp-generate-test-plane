@@ -101,7 +101,9 @@ async def run_config_test_case_client():
                             print(f"❌ Error: {result_data['error']}")
                         else:
                             print(f"✅ Success! Test cases generated:")
-                            print(f"📁 Output file: {result_data['output_file']}")
+                            print(f"📊 Excel file: {result_data['output_file']}")
+                            if 'csv_file' in result_data:
+                                print(f"📄 CSV file: {result_data['csv_file']} (for viewing in Cursor)")
                             print(f"💬 Message: {result_data.get('message', '')}")
                             
                             # Show statistics if available

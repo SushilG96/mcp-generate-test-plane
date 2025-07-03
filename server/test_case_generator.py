@@ -29,70 +29,221 @@ def load_test_config(config_path: str = "config/test_config.json") -> Dict[str, 
     except Exception as e:
         raise Exception(f"Error loading test config: {str(e)}")
 
-def load_test_plan_intelligence(test_plan_path: str = "output/test_plan.md") -> Dict[str, Any]:
-    """Load and extract intelligence from the test plan to inform test case generation."""
+def extract_application_identity(content: str, test_plan_content: str = "") -> Dict[str, str]:
+    """Extract application name and domain-specific terminology from content."""
+    app_identity = {
+        "app_name": "Application",
+        "app_acronym": "APP", 
+        "domain_keywords": [],
+        "technical_terms": []
+    }
+    
+    # Extract application name from titles, headers, or key phrases
+    lines = content.split('\n') + test_plan_content.split('\n')
+    
+    for line in lines:
+        line = line.strip()
+        
+        # Look for application names in titles and headers
+        if any(indicator in line.lower() for indicator in ['comprehensive test plan for', 'the ', 'overview', 'solution:']):
+            # Try to extract app name from patterns like "Test Plan for XYZ" or "The XYZ System"
+            for pattern in ['test plan for ', 'the ', ' is a ', ' solution', ' system', ' platform']:
+                if pattern in line.lower():
+                    parts = line.lower().split(pattern)
+                    if len(parts) > 1:
+                        potential_name = parts[1].split()[0:3]  # Take up to 3 words
+                        if potential_name:
+                            candidate = ' '.join(potential_name).strip('()')
+                            if len(candidate) > 2 and not any(skip in candidate for skip in ['test', 'plan', 'the', 'is', 'a']):
+                                app_identity["app_name"] = candidate.title()
+                                # Extract acronym if available
+                                if '(' in line and ')' in line:
+                                    acronym_match = line[line.find('(')+1:line.find(')')]
+                                    if len(acronym_match) <= 10 and acronym_match.isupper():
+                                        app_identity["app_acronym"] = acronym_match
+                                break
+        
+        # Extract domain-specific technical terms
+        domain_terms = []
+        if any(term in line.lower() for term in ['table', 'database', 'data']):
+            domain_terms.extend(['tables', 'database', 'data'])
+        if any(term in line.lower() for term in ['policy', 'rule', 'governance']):  
+            domain_terms.extend(['policies', 'rules', 'governance'])
+        if any(term in line.lower() for term in ['user', 'role', 'permission']):
+            domain_terms.extend(['users', 'roles', 'permissions'])
+        if any(term in line.lower() for term in ['service', 'api', 'endpoint']):
+            domain_terms.extend(['services', 'APIs', 'endpoints'])
+        if any(term in line.lower() for term in ['workflow', 'process', 'automation']):
+            domain_terms.extend(['workflows', 'processes', 'automation'])
+            
+        app_identity["domain_keywords"].extend(domain_terms)
+    
+    # Clean up and deduplicate
+    app_identity["domain_keywords"] = list(set(app_identity["domain_keywords"]))[:10]
+    
+    return app_identity
+
+def load_business_intelligence(input_dir: str = "input", test_plan_path: str = "output/test_plan.md") -> Dict[str, Any]:
+    """Load and extract comprehensive business intelligence from all available sources."""
+    
+    intelligence = {
+        "application_context": "",
+        "application_identity": {},
+        "business_domain": "",
+        "core_features": [],
+        "business_workflows": [],
+        "user_roles": [],
+        "integration_points": [],
+        "critical_scenarios": [],
+        "performance_requirements": [],
+        "security_requirements": [],
+        "compliance_requirements": [],
+        "business_rules": []
+    }
+    
+    # Step 1: Load business requirements from input files
+    input_content = ""
+    try:
+        from server.preprocess import read_and_preprocess_files
+        input_content = read_and_preprocess_files(input_dir)
+        
+        # Extract business context from input files
+        if input_content:
+            lines = input_content.split('\n')
+            
+            # Look for application purpose and domain
+            for line in lines:
+                line_lower = line.lower().strip()
+                if any(keyword in line_lower for keyword in ['problem it solves', 'solution overview', 'purpose', 'what is']):
+                    intelligence["application_context"] += line.strip() + " "
+                    
+                # Extract business domain indicators
+                if any(domain in line_lower for domain in ['data platform', 'lakehouse', 'policy', 'table', 'optimization', 'management']):
+                    intelligence["business_domain"] += line.strip() + " "
+                    
+                # Extract key features and capabilities
+                if any(feature in line_lower for feature in ['features', 'capabilities', 'functionalities', 'key']):
+                    intelligence["core_features"].append(line.strip())
+                    
+                # Extract workflow and process information
+                if any(workflow in line_lower for workflow in ['workflow', 'process', 'automation', 'pipeline', 'lifecycle']):
+                    intelligence["business_workflows"].append(line.strip())
+                    
+                # Extract user roles and personas
+                if any(role in line_lower for role in ['user', 'admin', 'engineer', 'role', 'platform', 'governance']):
+                    intelligence["user_roles"].append(line.strip())
+                    
+                # Extract business rules and constraints
+                if any(rule in line_lower for rule in ['policy', 'rule', 'threshold', 'configuration', 'hierarchical']):
+                    intelligence["business_rules"].append(line.strip())
+                    
+                # Extract compliance and regulatory requirements
+                if any(compliance in line_lower for compliance in ['compliance', 'audit', 'governance', 'regulatory', 'gdpr', 'hipaa']):
+                    intelligence["compliance_requirements"].append(line.strip())
+                    
+    except Exception as e:
+        print(f"Warning: Could not load input business context: {e}")
+    
+    # Step 2: Load strategic intelligence from test plan
+    test_plan_content = ""
     try:
         with open(test_plan_path, "r", encoding="utf-8") as file:
             test_plan_content = file.read()
         
-        # Extract key information from test plan
-        intelligence = {
-            "application_context": "",
-            "business_workflows": [],
-            "integration_points": [],
-            "critical_scenarios": [],
-            "performance_requirements": [],
-            "security_requirements": []
-        }
+        # Extract application identity from both input content and test plan
+        intelligence["application_identity"] = extract_application_identity(
+            input_content or "", test_plan_content
+        )
         
-        # Parse application context
-        if "Executive Summary" in test_plan_content:
-            lines = test_plan_content.split('\n')
-            in_summary = False
-            for line in lines:
-                if "Executive Summary" in line or "Strategic Overview" in line:
-                    in_summary = True
-                    continue
-                if in_summary and line.strip().startswith('**') and "Executive" not in line:
-                    break
-                if in_summary and line.strip():
-                    intelligence["application_context"] += line.strip() + " "
+        lines = test_plan_content.split('\n')
         
-        # Extract workflow patterns from test plan
-        workflow_indicators = [
-            "workflow", "process", "sequence", "integration", "end-to-end",
-            "business logic", "transaction", "pipeline", "orchestration"
-        ]
-        
-        lines = test_plan_content.lower().split('\n')
+        # Extract application context from executive summary
+        in_executive_summary = False
         for line in lines:
-            for indicator in workflow_indicators:
-                if indicator in line and len(line.strip()) > 20:
-                    intelligence["business_workflows"].append(line.strip())
-                    break
+            if "Executive Summary" in line:
+                in_executive_summary = True
+                continue
+            if in_executive_summary and line.strip().startswith('**') and "Executive Summary" not in line:
+                break
+            if in_executive_summary and line.strip() and not line.strip().startswith('**'):
+                intelligence["application_context"] += line.strip() + " "
         
-        # Extract performance requirements
-        perf_lines = [line for line in lines if any(kw in line for kw in ["performance", "response time", "throughput", "latency", "load"])]
-        intelligence["performance_requirements"] = perf_lines[:5]  # Top 5 performance insights
+        # Parse structured business workflows from test plan
+        current_section = None
+        for i, line in enumerate(lines):
+            line = line.strip()
+            
+            # Identify structured sections
+            if "Core Business Workflows" in line:
+                current_section = "workflows"
+                continue
+            elif "Business Rule Validation" in line:
+                current_section = "business_rules"  
+                continue
+            elif "Data Flow & Processing" in line:
+                current_section = "workflows"
+                continue
+            elif "Integration Scenarios" in line:
+                current_section = "integration"
+                continue
+            elif "User Role & Permission Testing" in line:
+                current_section = "user_roles"
+                continue
+            elif line.startswith("###") or (line.startswith("**") and "Testing" in line):
+                current_section = None
+                continue
+            
+            # Extract structured content based on current section
+            if current_section and line:
+                if line.startswith(("1.", "2.", "3.", "4.", "5.")) or line.startswith("-"):
+                    # Remove numbering and bullet points, extract the content
+                    content = line.split(".", 1)[-1].strip() if "." in line else line.strip("-").strip()
+                    
+                    if current_section == "workflows":
+                        intelligence["business_workflows"].append(content)
+                    elif current_section == "business_rules":
+                        intelligence["business_rules"].append(content)
+                    elif current_section == "integration":
+                        intelligence["integration_points"].append(content)
+                    elif current_section == "user_roles":
+                        intelligence["user_roles"].append(content)
         
-        # Extract security requirements  
-        sec_lines = [line for line in lines if any(kw in line for kw in ["security", "authentication", "authorization", "encryption", "owasp"])]
-        intelligence["security_requirements"] = sec_lines[:5]  # Top 5 security insights
+        # Extract key business functions
+        in_key_functions = False
+        for line in lines:
+            if "Key Business Functions" in line:
+                in_key_functions = True
+                continue
+            if in_key_functions and line.strip().startswith('**') and "Key Business Functions" not in line:
+                break
+            if in_key_functions and line.strip() and line.strip().startswith(("1.", "2.", "3.", "4.", "5.")):
+                function = line.split(".", 1)[-1].strip()
+                intelligence["core_features"].append(function)
         
-        return intelligence
-        
+        # Extract performance and security requirements
+        for i, line in enumerate(lines):
+            if "performance" in line.lower() and len(line.strip()) > 20:
+                intelligence["performance_requirements"].append(line.strip())
+            if any(sec in line.lower() for sec in ["security", "rbac", "authentication", "authorization"]) and len(line.strip()) > 20:
+                intelligence["security_requirements"].append(line.strip())
+                    
     except FileNotFoundError:
-        # Return empty intelligence if test plan not found
-        return {
-            "application_context": "API testing without specific business context",
-            "business_workflows": [],
-            "integration_points": [],
-            "critical_scenarios": [],
-            "performance_requirements": [],
-            "security_requirements": []
-        }
+        print(f"Warning: Test plan not found at {test_plan_path}")
     except Exception as e:
-        raise Exception(f"Error loading test plan intelligence: {str(e)}")
+        print(f"Warning: Could not load test plan intelligence: {e}")
+    
+    # Clean up and deduplicate
+    for key in intelligence:
+        if isinstance(intelligence[key], list):
+            # Remove duplicates and empty entries
+            intelligence[key] = list(set([item for item in intelligence[key] if item.strip()]))
+            # Keep only top 10 items to avoid overwhelming context
+            intelligence[key] = intelligence[key][:10]
+        elif isinstance(intelligence[key], str):
+            # Clean up text
+            intelligence[key] = intelligence[key].strip()
+    
+    return intelligence
 
 def analyze_api_relationships(endpoints: List[Dict], openapi_spec: Dict[str, Any]) -> Dict[str, Any]:
     """Analyze API endpoints to identify potential workflows and relationships."""
@@ -150,108 +301,218 @@ def analyze_api_relationships(endpoints: List[Dict], openapi_spec: Dict[str, Any
         "potential_sequences": sequences[:10]  # Limit to top 10 sequences
     }
 
-def generate_workflow_test_cases(endpoint: Dict, test_plan_intelligence: Dict, api_relationships: Dict, all_endpoints: List[Dict]) -> List[Dict]:
-    """Generate intelligent workflow test cases based on test plan analysis and API relationships."""
+def generate_workflow_test_cases(endpoint: Dict, business_intelligence: Dict, api_relationships: Dict, all_endpoints: List[Dict]) -> List[Dict]:
+    """Generate intelligent workflow test cases based on comprehensive business intelligence and API relationships."""
     
     workflow_tests = []
     endpoint_path = endpoint['path']
     endpoint_method = endpoint['method']
     endpoint_tag = endpoint.get('tags', ['API'])[0] if endpoint.get('tags') else 'API'
     
-    # Get application context for more intelligent test descriptions
-    app_context = test_plan_intelligence.get("application_context", "API system")
-    business_workflows = test_plan_intelligence.get("business_workflows", [])
+    # Extract rich business context and application identity
+    app_context = business_intelligence.get("application_context", "API system")
+    app_identity = business_intelligence.get("application_identity", {})
+    business_domain = business_intelligence.get("business_domain", "")  
+    core_features = business_intelligence.get("core_features", [])
+    business_workflows = business_intelligence.get("business_workflows", [])
+    user_roles = business_intelligence.get("user_roles", [])
+    business_rules = business_intelligence.get("business_rules", [])
+    integration_points = business_intelligence.get("integration_points", [])
     
-    # 1. End-to-End Workflow Test
-    workflow_tests.append({
-        "suffix": "WORKFLOW-E2E",
-        "title": f"Test {endpoint_method} {endpoint_path} - End-to-End Business Workflow",
-        "description": f"Verify {endpoint_method} {endpoint_path} works correctly within complete business workflows based on test plan analysis",
-        "category": "Workflow Integration",
-        "priority": "High",
-        "test_level": "System",
-        "risk_level": "High",
-        "test_steps": f"1. Identify complete business workflow involving {endpoint_path}\n2. Set up prerequisite data and system state\n3. Execute workflow sequence including {endpoint_method} {endpoint_path}\n4. Verify end-to-end workflow completion\n5. Validate business rules and data consistency\n6. Check audit trails and logging\n7. Verify rollback scenarios if workflow fails",
-        "expected_results": f"Complete workflow executes successfully; Business rules enforced; Data consistency maintained; Proper error handling in workflow failures; Context: {app_context[:100]}...",
-        "test_data": "Complete workflow scenario data, prerequisite resources, business rule test cases",
-        "tags": "api, workflow, e2e, business-process, integration, system-test"
-    })
+    # Extract dynamic application identity
+    app_name = app_identity.get("app_name", "Application")
+    app_acronym = app_identity.get("app_acronym", "APP")
+    domain_keywords = app_identity.get("domain_keywords", ["resources", "data", "services"])
     
-    # 2. API Sequence Testing
-    related_endpoints = []
-    for seq in api_relationships.get("potential_sequences", []):
-        if (seq["endpoint1"]["path"] == endpoint_path and seq["endpoint1"]["method"] == endpoint_method) or \
-           (seq["endpoint2"]["path"] == endpoint_path and seq["endpoint2"]["method"] == endpoint_method):
-            related_endpoints.append(seq)
+    # Create context-aware descriptions
+    domain_context = app_context[:200] if app_context else "business system"
+    features_context = "; ".join(core_features[:3]) if core_features else ""
+    roles_context = "; ".join([role[:50] for role in user_roles[:3]]) if user_roles else ""
     
-    sequence_description = f"Test {endpoint_method} {endpoint_path} in sequence with related APIs"
-    if related_endpoints:
-        related_info = related_endpoints[0]
-        other_ep = related_info["endpoint2"] if related_info["endpoint1"]["path"] == endpoint_path else related_info["endpoint1"]
-        sequence_description = f"Test {endpoint_method} {endpoint_path} in sequence with {other_ep['method']} {other_ep['path']}"
+    # Create domain-specific test data and configuration terms
+    primary_domain_term = domain_keywords[0] if domain_keywords else "resources"
+    secondary_domain_term = domain_keywords[1] if len(domain_keywords) > 1 else "configurations"
     
-    workflow_tests.append({
-        "suffix": "WORKFLOW-SEQUENCE",
-        "title": f"Test {endpoint_method} {endpoint_path} - API Sequence Integration",
-        "description": sequence_description,
-        "category": "Workflow Integration",
-        "priority": "Medium",
-        "test_level": "Integration",
-        "risk_level": "Medium",
-        "test_steps": f"1. Identify API sequence involving {endpoint_path}\n2. Test prerequisite API calls\n3. Execute {endpoint_method} {endpoint_path} in sequence\n4. Verify data flow between APIs\n5. Test sequence with invalid intermediate states\n6. Validate error propagation in sequence\n7. Test sequence rollback scenarios",
-        "expected_results": "API sequence executes correctly; Data flows properly between calls; Error handling works in sequence; State consistency maintained",
-        "test_data": "Sequence test data, intermediate state data, dependency chain test cases",
-        "tags": "api, workflow, sequence, integration, data-flow"
-    })
+    # Create specific test cases for each business workflow
+    specific_workflows = []
+    for workflow in business_workflows[:3]:  # Top 3 workflows
+        specific_workflows.append({
+            "name": workflow,
+            "description": f"Test {endpoint_method} {endpoint_path} integration with {workflow}"
+        })
     
-    # 3. CRUD Workflow Testing (if endpoint is part of CRUD operations)
-    endpoint_crud_info = None
-    for crud in api_relationships.get("crud_workflows", []):
-        if endpoint_tag == crud["tag"] or any(endpoint_path in path for path in crud["paths"]):
-            endpoint_crud_info = crud
-            break
+    # Create specific test cases for each business rule
+    specific_rules = []
+    for rule in business_rules[:3]:  # Top 3 rules
+        specific_rules.append({
+            "name": rule,
+            "description": f"Validate {rule} enforcement when calling {endpoint_method} {endpoint_path}"
+        })
     
-    crud_operations = ""
-    if endpoint_crud_info:
-        crud_operations = f"Part of {endpoint_crud_info['tag']} CRUD workflow: {', '.join(endpoint_crud_info['operations'])}"
+    # Create specific integration test cases
+    specific_integrations = []
+    for integration in integration_points[:2]:  # Top 2 integrations
+        specific_integrations.append({
+            "name": integration,
+            "description": f"Test {endpoint_method} {endpoint_path} integration with {integration}"
+        })
     
-    workflow_tests.append({
-        "suffix": "WORKFLOW-CRUD",
-        "title": f"Test {endpoint_method} {endpoint_path} - CRUD Workflow Integration",
-        "description": f"Verify {endpoint_method} {endpoint_path} works correctly within CRUD operations workflow",
-        "category": "Workflow Integration",
-        "priority": "Medium",
-        "test_level": "Integration",
-        "risk_level": "Medium",
-        "test_steps": f"1. Test CREATE operation and data setup\n2. Verify READ operations can access created data\n3. Test {endpoint_method} {endpoint_path} with existing data\n4. Execute UPDATE operations and verify changes\n5. Test DELETE operations and cleanup\n6. Verify referential integrity throughout CRUD cycle\n7. Test concurrent CRUD operations",
-        "expected_results": f"CRUD workflow operates correctly; Data integrity maintained; Proper resource lifecycle management; {crud_operations}",
-        "test_data": "CRUD workflow test data, resource lifecycle scenarios, concurrent operation test cases",
-        "tags": "api, workflow, crud, lifecycle, data-integrity"
-    })
+    # 1. End-to-End Business Workflow Test with specific workflows
+    if specific_workflows:
+        primary_workflow = specific_workflows[0]["name"]
+        workflow_tests.append({
+            "suffix": "WORKFLOW-E2E",
+            "title": f"Test {endpoint_method} {endpoint_path} - {primary_workflow} End-to-End Workflow",
+            "description": f"Verify {endpoint_method} {endpoint_path} works correctly within {primary_workflow} for {app_name}",
+            "category": "Workflow Integration",
+            "priority": "High",
+            "test_level": "System",
+            "risk_level": "High",
+            "test_steps": f"1. Set up {primary_workflow} business scenario\n2. Configure {app_name} environment with required {secondary_domain_term} and {primary_domain_term}\n3. Execute {primary_workflow} workflow including {endpoint_method} {endpoint_path}\n4. Validate {primary_workflow} completion and results\n5. Verify automated {primary_domain_term} maintenance operations\n6. Check {secondary_domain_term} enforcement and compliance\n7. Test monitoring and observability features\n8. Validate end-to-end data integrity",
+            "expected_results": f"{primary_workflow} completes successfully; Automated operations execute correctly; {secondary_domain_term.title()} compliance maintained; Monitoring data captured",
+            "test_data": f"{app_name} {primary_workflow} test data, {primary_domain_term} configurations, {secondary_domain_term} definitions",
+            "tags": f"api, workflow, e2e, {app_acronym.lower()}, {primary_workflow.lower().replace(' ', '-')}, {endpoint_tag.lower()}"
+        })
+    else:
+        # Fallback generic workflow test
+        workflow_tests.append({
+            "suffix": "WORKFLOW-E2E",
+            "title": f"Test {endpoint_method} {endpoint_path} - End-to-End Business Workflow",
+            "description": f"Verify {endpoint_method} {endpoint_path} works correctly within complete business workflows",
+            "category": "Workflow Integration",
+            "priority": "High",
+            "test_level": "System",
+            "risk_level": "High",
+            "test_steps": f"1. Set up business scenario\n2. Execute end-to-end workflow including {endpoint_method} {endpoint_path}\n3. Validate business process completion\n4. Test workflow failure and recovery scenarios",
+            "expected_results": "Business workflow completes successfully; Data consistency maintained",
+            "test_data": "Business workflow data and configurations",
+            "tags": f"api, workflow, e2e, business-process, {endpoint_tag.lower()}"
+        })
     
-    # 4. Cross-Module Integration
-    cross_module_endpoints = []
-    current_module = endpoint_tag
-    for ep in all_endpoints:
-        ep_tags = ep.get('tags', ['General'])
-        if ep_tags and ep_tags[0] != current_module and ep['path'] != endpoint_path:
-            cross_module_endpoints.append(ep)
+    # 2. Business Rule Validation Testing with specific rules
+    if specific_rules:
+        primary_rule = specific_rules[0]["name"]
+        workflow_tests.append({
+            "suffix": "WORKFLOW-SEQUENCE",
+            "title": f"Test {endpoint_method} {endpoint_path} - {primary_rule} Validation",
+            "description": f"Validate {primary_rule} business logic when using {endpoint_method} {endpoint_path}",
+            "category": "Workflow Integration",
+            "priority": "Medium",
+            "test_level": "Integration",
+            "risk_level": "Medium",
+            "test_steps": f"1. Set up {app_name} environment with {primary_rule} configuration\n2. Create test {primary_domain_term} requiring {primary_rule}\n3. Execute {endpoint_method} {endpoint_path} to trigger {primary_rule}\n4. Validate {primary_rule} business logic enforcement\n5. Test edge cases for {primary_rule} scenarios\n6. Verify automated cleanup and maintenance\n7. Check {secondary_domain_term} compliance during {primary_rule}\n8. Validate audit logging for {primary_rule} operations",
+            "expected_results": f"{primary_rule} business logic correctly enforced; Automated operations complete successfully; {secondary_domain_term.title()} compliance maintained; Audit trails captured",
+            "test_data": f"{app_name} {primary_rule} test scenarios, {primary_domain_term} states, {secondary_domain_term} configurations",
+            "tags": f"api, workflow, business-rules, {app_acronym.lower()}, {primary_rule.lower().replace(' ', '-')}, {endpoint_tag.lower()}"
+        })
+    else:
+        # Fallback to API sequence testing
+        related_endpoints = []
+        for seq in api_relationships.get("potential_sequences", []):
+            if (seq["endpoint1"]["path"] == endpoint_path and seq["endpoint1"]["method"] == endpoint_method) or \
+               (seq["endpoint2"]["path"] == endpoint_path and seq["endpoint2"]["method"] == endpoint_method):
+                related_endpoints.append(seq)
+        
+        sequence_description = f"Test {endpoint_method} {endpoint_path} in sequence with related APIs"
+        if related_endpoints:
+            related_info = related_endpoints[0]
+            other_ep = related_info["endpoint2"] if related_info["endpoint1"]["path"] == endpoint_path else related_info["endpoint1"]
+            sequence_description = f"Test {endpoint_method} {endpoint_path} in sequence with {other_ep['method']} {other_ep['path']}"
+        
+        workflow_tests.append({
+            "suffix": "WORKFLOW-SEQUENCE",
+            "title": f"Test {endpoint_method} {endpoint_path} - Business Process Sequence",
+            "description": f"{sequence_description} within business processes",
+            "category": "Workflow Integration",
+            "priority": "Medium",
+            "test_level": "Integration",
+            "risk_level": "Medium",
+            "test_steps": f"1. Execute prerequisite business operations\n2. Call {endpoint_method} {endpoint_path} in business sequence\n3. Verify business data flow and transformations\n4. Test business rule violations in sequence",
+            "expected_results": "Business process sequence completes successfully; Data flows correctly",
+            "test_data": "Business process sequence data and configurations",
+            "tags": f"api, workflow, sequence, business-process, {endpoint_tag.lower()}"
+        })
     
-    integration_context = f"Integration with other modules in {app_context[:50]}..." if app_context else "Cross-module integration testing"
+    # 3. User Role & Permission Testing with specific roles
+    if user_roles:
+        primary_role = user_roles[0][:50]  # Limit length
+        workflow_tests.append({
+            "suffix": "WORKFLOW-CRUD",
+            "title": f"Test {endpoint_method} {endpoint_path} - {primary_role} Role Lifecycle",
+            "description": f"Verify {endpoint_method} {endpoint_path} works correctly with {primary_role} permissions and role-based access control",
+            "category": "Workflow Integration", 
+            "priority": "Medium",
+            "test_level": "Integration",
+            "risk_level": "Medium",
+            "test_steps": f"1. Set up {app_name} environment with RBAC configuration\n2. Create {primary_role} user with appropriate permissions\n3. Test {endpoint_method} {endpoint_path} access as {primary_role}\n4. Validate role-specific data visibility and operations\n5. Test unauthorized operations for {primary_role}\n6. Verify {secondary_domain_term} enforcement for {primary_role} role\n7. Test role transitions and permission changes\n8. Validate audit logging for role-based operations",
+            "expected_results": f"{primary_role} role permissions correctly enforced; Appropriate access control maintained; Unauthorized operations blocked; Audit trails captured",
+            "test_data": f"{app_name} RBAC configurations, {primary_role} permission scenarios, access control test cases",
+            "tags": f"api, workflow, rbac, {app_acronym.lower()}, {primary_role.lower().replace(' ', '-')}, {endpoint_tag.lower()}"
+        })
+    else:
+        # Fallback to generic CRUD testing
+        endpoint_crud_info = None
+        for crud in api_relationships.get("crud_workflows", []):
+            if endpoint_tag == crud["tag"] or any(endpoint_path in path for path in crud["paths"]):
+                endpoint_crud_info = crud
+                break
+        
+        crud_operations = ""
+        if endpoint_crud_info:
+            crud_operations = f"Part of {endpoint_crud_info['tag']} CRUD workflow: {', '.join(endpoint_crud_info['operations'])}"
+        
+        workflow_tests.append({
+            "suffix": "WORKFLOW-CRUD",
+            "title": f"Test {endpoint_method} {endpoint_path} - Business Resource Lifecycle",
+            "description": f"Verify {endpoint_method} {endpoint_path} works correctly within business resource lifecycle",
+            "category": "Workflow Integration",
+            "priority": "Medium",
+            "test_level": "Integration",
+            "risk_level": "Medium",
+            "test_steps": f"1. CREATE business resource\n2. READ and verify resource state\n3. Execute {endpoint_method} {endpoint_path}\n4. UPDATE business resource\n5. DELETE business resource\n6. Verify data consistency throughout lifecycle",
+            "expected_results": f"Business resource lifecycle operates correctly; Data integrity maintained; {crud_operations}",
+            "test_data": "Business resource lifecycle data and validation scenarios",
+            "tags": f"api, workflow, crud, lifecycle, {endpoint_tag.lower()}"
+        })
     
-    workflow_tests.append({
-        "suffix": "WORKFLOW-INTEGRATION",
-        "title": f"Test {endpoint_method} {endpoint_path} - Cross-Module Integration",
-        "description": f"Verify {endpoint_method} {endpoint_path} integrates correctly with other system modules",
-        "category": "Workflow Integration", 
-        "priority": "Medium",
-        "test_level": "System",
-        "risk_level": "Medium",
-        "test_steps": f"1. Identify cross-module dependencies for {endpoint_path}\n2. Test integration with external modules\n3. Verify data exchange between modules\n4. Test module isolation and error boundaries\n5. Validate cross-module authentication/authorization\n6. Test module failover scenarios\n7. Verify cross-module transaction consistency",
-        "expected_results": f"Cross-module integration works correctly; Module boundaries respected; Data consistency across modules; {integration_context}",
-        "test_data": "Cross-module integration data, external dependency mocks, module boundary test scenarios",
-        "tags": "api, workflow, integration, cross-module, system-integration"
-    })
+    # 4. Integration Scenarios with specific integration points
+    if specific_integrations:
+        primary_integration = specific_integrations[0]["name"]
+        workflow_tests.append({
+            "suffix": "WORKFLOW-INTEGRATION",
+            "title": f"Test {endpoint_method} {endpoint_path} - {primary_integration} Integration",
+            "description": f"Verify {endpoint_method} {endpoint_path} integrates correctly with {primary_integration}",
+            "category": "Workflow Integration",
+            "priority": "Medium",
+            "test_level": "System",
+            "risk_level": "Medium",
+            "test_steps": f"1. Set up {app_name} environment with {primary_integration} connectivity\n2. Configure {primary_integration} integration parameters\n3. Execute {endpoint_method} {endpoint_path} triggering {primary_integration} workflow\n4. Validate data exchange with {primary_integration}\n5. Test error handling for {primary_integration} failures\n6. Verify {app_name} operations continue during {primary_integration} issues\n7. Test end-to-end workflow including {primary_integration}\n8. Validate monitoring and logging for {primary_integration} operations",
+            "expected_results": f"{primary_integration} integration works correctly; Data exchange successful; Error handling robust; End-to-end workflow completes",
+            "test_data": f"{app_name} {primary_integration} integration configurations, test data exchange scenarios, error simulation cases",
+            "tags": f"api, workflow, integration, {app_acronym.lower()}, {primary_integration.lower().replace(' ', '-')}, {endpoint_tag.lower()}"
+        })
+    else:
+        # Fallback to generic cross-module integration
+        cross_module_endpoints = []
+        current_module = endpoint_tag
+        for ep in all_endpoints:
+            ep_tags = ep.get('tags', ['General'])
+            if ep_tags and ep_tags[0] != current_module and ep['path'] != endpoint_path:
+                cross_module_endpoints.append(ep)
+        
+        workflow_tests.append({
+            "suffix": "WORKFLOW-INTEGRATION", 
+            "title": f"Test {endpoint_method} {endpoint_path} - Cross-System Integration",
+            "description": f"Verify {endpoint_method} {endpoint_path} integrates correctly with other systems",
+            "category": "Workflow Integration",
+            "priority": "Medium",
+            "test_level": "System",
+            "risk_level": "Medium",
+            "test_steps": f"1. Test integration with external systems\n2. Verify data exchange and transformations\n3. Test error handling across systems\n4. Validate transaction consistency\n5. Check audit trail integration",
+            "expected_results": "Cross-system integration works correctly; Data consistency maintained",
+            "test_data": "Cross-system integration data and configurations",
+            "tags": f"api, workflow, integration, cross-system, {endpoint_tag.lower()}"
+        })
     
     return workflow_tests
 
@@ -300,11 +561,11 @@ def generate_comprehensive_test_cases(endpoints: List[Dict], openapi_spec: Dict[
     # Get enabled test suffixes from config
     enabled_suffixes = get_enabled_test_suffixes(config)
     
-    # Load test plan intelligence if workflow tests are enabled
-    test_plan_intelligence = {}
+    # Load comprehensive business intelligence if workflow tests are enabled
+    business_intelligence = {}
     api_relationships = {}
     if any("WORKFLOW" in suffix for suffix in enabled_suffixes):
-        test_plan_intelligence = load_test_plan_intelligence()
+        business_intelligence = load_business_intelligence(input_dir="input")
         api_relationships = analyze_api_relationships(endpoints, openapi_spec)
     
     test_cases_list = []
@@ -567,7 +828,7 @@ def generate_comprehensive_test_cases(endpoints: List[Dict], openapi_spec: Dict[
         # Add intelligent workflow test cases if enabled
         if any("WORKFLOW" in suffix for suffix in enabled_suffixes):
             workflow_test_cases = generate_workflow_test_cases(
-                endpoint, test_plan_intelligence, api_relationships, endpoints
+                endpoint, business_intelligence, api_relationships, endpoints
             )
             all_test_case_types.extend(workflow_test_cases)
         
@@ -660,10 +921,11 @@ async def generate_test_cases(input_dir: str, ctx: Context) -> dict:
         test_cases_list = generate_comprehensive_test_cases(endpoints, openapi_spec, config)
         enabled_suffixes = get_enabled_test_suffixes(config)
         
-        # Log workflow intelligence usage
+        # Log business intelligence usage
         workflow_enabled = any("WORKFLOW" in suffix for suffix in enabled_suffixes)
         if workflow_enabled:
-            await ctx.info(f"✨ Workflow intelligence enabled - analyzing test plan and API relationships")
+            await ctx.info(f"🧠 Business intelligence enabled - analyzing input files, test plan, and API relationships")
+            await ctx.info(f"📄 Input file analysis: Extracting business domain, features, user roles, and business rules")
             await ctx.info(f"📋 Test plan analysis: Found business context and workflow patterns")
             await ctx.info(f"🔗 API relationship analysis: Identifying CRUD workflows and sequences")
         
@@ -772,6 +1034,11 @@ async def generate_test_cases(input_dir: str, ctx: Context) -> dict:
         
         await ctx.info(f"Excel test cases saved to {output_file}")
         
+        # Also save as CSV for easy viewing in Cursor
+        csv_file = os.path.join(output_dir, "test_cases.csv")
+        df_test_cases.to_csv(csv_file, index=False)
+        await ctx.info(f"CSV test cases saved to {csv_file}")
+        
         # Calculate statistics
         statistics = {
             "total_test_suites": len(df_test_cases['test_suite'].unique()),
@@ -787,8 +1054,9 @@ async def generate_test_cases(input_dir: str, ctx: Context) -> dict:
         return {
             "success": True,
             "output_file": output_file,
+            "csv_file": csv_file,
             "statistics": statistics,
-            "message": f"Successfully generated {len(test_cases_list)} test cases for {len(endpoints)} API endpoints in Excel format"
+            "message": f"Successfully generated {len(test_cases_list)} test cases for {len(endpoints)} API endpoints in Excel and CSV formats"
         }
         
     except Exception as e:

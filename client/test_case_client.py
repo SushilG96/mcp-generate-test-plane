@@ -45,7 +45,9 @@ async def run_test_case_generator():
                 result_data = json.loads(result.content[0].text)
                 
                 if result_data.get("success"):
-                    print(f"   📁 Output file: {result_data.get('output_file', 'output/test_cases.xlsx')}")
+                    print(f"   📊 Excel file: {result_data.get('output_file', 'output/test_cases.xlsx')}")
+                    if 'csv_file' in result_data:
+                        print(f"   📄 CSV file: {result_data['csv_file']} (for viewing in Cursor)")
                     print(f"   📋 Message: {result_data.get('message', '')}")
                     
                     # Display statistics

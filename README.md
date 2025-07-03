@@ -255,15 +255,34 @@ The **functional** test type now provides comprehensive coverage with 5 distinct
 
 This ensures **complete functional coverage** including both positive and negative test scenarios, making functional testing much more robust than the previous single happy-path test.
 
+#### 🧠 Intelligent Workflow Integration Testing
+
+The **workflow_integration** test type provides **AI-powered test generation** that analyzes your test plan and API relationships to create sophisticated workflow tests:
+
+| Workflow Test | Intelligence Source | What It Tests |
+|---------------|-------------------|---------------|
+| **WORKFLOW-E2E** | Test Plan Analysis | End-to-end business workflows extracted from test plan context |
+| **WORKFLOW-SEQUENCE** | API Relationship Analysis | API call sequences and data flow between related endpoints |
+| **WORKFLOW-CRUD** | CRUD Pattern Detection | Complete resource lifecycle (Create → Read → Update → Delete) |
+| **WORKFLOW-INTEGRATION** | Cross-Module Analysis | Integration between different API modules and system components |
+
+**🎯 Key Intelligence Features:**
+- **Test Plan Context Awareness**: Extracts business workflows and application purpose from `output/test_plan.md`
+- **API Relationship Discovery**: Automatically identifies related APIs and potential call sequences
+- **CRUD Workflow Detection**: Recognizes Create-Read-Update-Delete patterns across endpoints
+- **Cross-Module Integration**: Tests how different API modules work together
+- **Business Context Integration**: Uses application context to create more meaningful test scenarios
+
 ### 📚 Predefined Profiles
 
 | Profile | Description | Test Types | Use Case |
 |---------|-------------|------------|----------|
 | **quick** | Quick smoke tests for CI/CD (9 tests/endpoint) | functional, security | Fast pipeline validation |
 | **development** | Basic development testing (7 tests/endpoint) | functional, error_handling | Dev environment testing |
+| **workflow_focused** | Intelligent workflow and integration testing (9 tests/endpoint) | functional, workflow_integration | Business workflow validation |
 | **security_audit** | Security-focused testing (12 tests/endpoint) | functional, security, error_handling, edge_cases | Security assessments |
 | **performance_testing** | Performance and reliability focus (11 tests/endpoint) | functional, performance, reliability, scalability | Load testing scenarios |
-| **comprehensive** | Complete test coverage (19 tests/endpoint) | All 8 categories | Full testing cycles |
+| **comprehensive** | Complete test coverage with workflow intelligence (23 tests/endpoint) | All 9 categories | Full testing cycles |
 
 ### 🎮 Using Configuration Profiles
 
@@ -328,15 +347,23 @@ python client/config_test_case_client.py
 "current_profile": "performance_testing"
 ```
 
+**Intelligent Workflow Testing (9 tests per endpoint):**
+```bash
+python client/config_test_case_client.py
+# Select "workflow_focused" profile
+# Generates: 5 functional + 4 intelligent workflow tests
+# Uses test plan analysis for context-aware test generation
+```
+
 **Custom Configuration:**
 ```json
 {
   "current_profile": null,  // Use individual settings
   "enabled_test_types": {
     "functional": {"enabled": true},
-    "error_handling": {"enabled": true},
-    "performance": {"enabled": true}
-    // Only these 3 types will be generated
+    "workflow_integration": {"enabled": true},
+    "error_handling": {"enabled": true}
+    // Combines functional, workflow intelligence, and error handling
   }
 }
 ```

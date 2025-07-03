@@ -86,7 +86,7 @@
       "enabled_types": ["functional", "workflow_integration"]
     }
   },
-  "current_profile": "quick",
+  "current_profile": "comprehensive",
   "output_settings": {
     "excel_filename": "test_cases.xlsx",
     "include_metadata": true,
