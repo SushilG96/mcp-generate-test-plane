@@ -1,533 +1,379 @@
-# Test Plan & Test Case Generator MCP
+# MCP Test Automation Framework
 
-A comprehensive testing solution powered by MCP (Model Context Protocol) that generates detailed test plans and Excel-formatted test cases for API testing.
+An advanced **Model Context Protocol (MCP)** based test automation framework that reads test cases from CSV and dynamically generates component-based pytest frameworks for API testing.
 
-## 🚀 Overview
+## 🚀 Enhanced Features
 
-This project provides two powerful MCP servers that work together to create a complete testing pipeline:
+### ✅ **Component-Based Organization**
+- **One test file per component**: Generate `test_config_component.py`, `test_namespaces_component.py`, etc.
+- **Better maintainability**: Tests grouped by functionality rather than arbitrary splits
+- **Smart categorization**: Automatic component detection from API paths
 
-1. **Test Plan Generator** - Creates comprehensive test plans from OpenAPI specifications and other input files
-2. **Test Case Generator** - Generates detailed, executable test cases in Excel format directly from OpenAPI specifications
+### ✅ **Intelligent Test Generation with AI Enhancement**
+- **Hybrid Intelligence**: Combines rule-based reliability with AI-powered innovation
+- **Multiple AI Providers**: Groq, OpenAI, and Anthropic integration
+- **Intelligence Levels**: Rule-based, Balanced (hybrid), and AI-first approaches
+- **Smart Test Types**: Innovative, edge cases, advanced security, and intelligent performance testing
+- **Category-aware implementations**: Different test logic for Functional, Security, Performance, Error Handling
+- **Rich pytest markers**: Component, category, priority, and test-type markers
+- **Mock response handling**: Works without live API endpoints
+- **Comprehensive coverage**: Happy path, negative, boundary, and edge case testing
 
-## 📋 Features
+### ✅ **Advanced MCP Integration**
+- **Enhanced MCP Server**: `mcp_pytest_server.py` with built-in utilities
+- **Sophisticated Client**: `mcp_pytest_client.py` with interactive workflows
+- **Component-specific operations**: Analyze, generate, and run tests per component
+- **Real-time analysis**: Comprehensive CSV analysis with component breakdowns
 
-### Test Plan Generator
-- ✅ Generates enterprise-grade test plans from OpenAPI specifications
-- ✅ Supports multiple input formats (JSON, YAML, text files)
-- ✅ Risk-based testing approach with comprehensive coverage analysis
-- ✅ Includes security, performance, and functional testing strategies
-- ✅ Follows industry best practices and modern testing methodologies
+## 📊 Current Test Coverage
 
-### Test Case Generator
-- ✅ Creates structured test cases directly from OpenAPI specifications
-- ✅ Generates Excel-formatted test cases with multiple organized sheets
-- ✅ Includes detailed test steps, expected results, and test data
-- ✅ Covers functional, security, performance, and error handling testing
-- ✅ Provides test execution tracking capabilities
-- ✅ Ready for import into test management tools and automation frameworks
+- **Total Test Cases**: 828
+- **Components**: 5 (config, namespaces, policies, tables, tasks)
+- **Categories**: 9 (Functional, Security, Performance, Error Handling, etc.)
+- **Automation Coverage**: 100%
+- **Generated Files**: One comprehensive test file per component
 
-## 🏗️ Architecture
+## 🧠 AI Intelligence Levels
 
-```
-Input Files → Test Plan Generator → Test Plan → Test Case Generator → Executable Test Cases
-     ↓                ↓                 ↓              ↓                    ↓
-OpenAPI.json    Comprehensive     test_plan.md    Structured         test_cases.json
-URLs.txt        Analysis &                        Test Cases         Ready for Automation
-Other Files     Strategy
-```
+The system supports multiple intelligence levels for test generation:
 
-## 📦 Installation
+### 1. **Rule-based** (`--intelligence-level rule_based`)
+- ✅ **Reliable**: Consistent, predictable test patterns
+- ✅ **Fast**: No API calls, instant generation
+- ✅ **No dependencies**: Works offline
+- 🎯 **Use case**: Production systems, CI/CD pipelines
 
-1. **Clone the repository:**
-   ```bash
-   git clone <repository-url>
-   cd mcp-generate-test-plane
-   ```
+### 2. **Balanced** (`--intelligence-level balanced`) 
+- ✅ **Hybrid approach**: Combines AI creativity with rule-based reliability
+- 🤖 **AI-enhanced**: Uses LLM for creative test scenarios
+- 🛡️ **Fallback protection**: Falls back to rules if AI fails
+- 🎯 **Use case**: Best of both worlds (Recommended)
 
-2. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   # or using uv
-   uv sync
-   ```
+### 3. **AI-first** (`--intelligence-level ai_first`)
+- 🤖 **AI-powered**: Maximizes creative, intelligent test generation
+- 🚀 **Innovative**: Generates unique test scenarios beyond templates
+- 🛡️ **Fallback protection**: Falls back to rules if AI fails
+- 🎯 **Use case**: Research, advanced testing, maximum creativity
 
-3. **Set up environment variables:**
-   Create a `.env` file in the root directory:
-   ```bash
-   GROQ_API_KEY=your_groq_api_key_here
-   ```
+## 🤖 AI Providers
 
-## 🚀 Quick Start
+### **Groq** (`--ai-provider groq`)
+- ⚡ **Fast**: Ultra-fast inference with specialized hardware
+- 🎯 **Model**: Llama3-8B-8192 (default)
+- 💰 **Cost**: Very affordable
+- 🔑 **Setup**: `export GROQ_API_KEY="your-key"`
 
-### Option 1: Complete Pipeline (Recommended)
-Run both servers in sequence with the orchestrator:
+### **OpenAI** (`--ai-provider openai`)
+- 🧠 **Advanced**: GPT-4 for sophisticated test generation
+- 🎯 **Model**: GPT-4 (default)
+- 🔑 **Setup**: `export OPENAI_API_KEY="your-key"`
+
+### **Anthropic** (`--ai-provider anthropic`)
+- 🎯 **Balanced**: Claude-3 Sonnet for reliable creativity
+- 🎯 **Model**: claude-3-sonnet-20240229 (default)
+- 🔑 **Setup**: `export ANTHROPIC_API_KEY="your-key"`
+
+## 🎨 Smart Test Types
+
+The AI intelligently determines test types based on context:
+
+- **🔒 Security Advanced**: For auth, permissions, access control
+- **⚡ Performance Intelligent**: For load, stress, scalability tests
+- **🎯 Edge Cases**: For boundary conditions, unusual scenarios
+- **🚀 Innovative**: For creative, comprehensive testing
+
+## 🎯 Quick Start
+
+### Option 1: Enhanced MCP System with AI Intelligence (Recommended)
 
 ```bash
-python run_complete_testing_pipeline.py
+# Navigate to the MCP system directory
+cd mcp_pytest/
+
+# Set up AI API keys (optional, for intelligent generation)
+export GROQ_API_KEY="your-groq-api-key"
+export OPENAI_API_KEY="your-openai-api-key"
+export ANTHROPIC_API_KEY="your-anthropic-api-key"
+
+# AI-Enhanced test generation
+python client.py generate --use-ai --ai-provider groq --intelligence-level balanced
+python client.py generate --use-ai --ai-provider openai --intelligence-level ai_first
+python client.py generate --component config --use-ai --intelligence-level balanced
+
+# Traditional rule-based generation (no AI required)
+python client.py generate --component config --intelligence-level rule_based
+
+# Interactive mode with AI options
+python client.py interactive
 ```
 
-This will:
-1. Generate a comprehensive test plan from your input files
-2. Create detailed test cases from the test plan
-3. Validate the test cases
-4. Show summary statistics and next steps
+### Option 2: Simple Direct Generation
 
-### Option 2: Individual Servers
-
-#### Generate Test Plan Only
 ```bash
-uv run python client/client.py
+# Navigate to the MCP system directory
+cd mcp_pytest/
+
+# Direct test generation without MCP complexity
+python simple_generator.py analyze
+python simple_generator.py generate
+python simple_generator.py run
 ```
 
-#### Generate Test Cases (Excel format)
-  ```bash
-  python client/test_case_client.py
-  ```
+### Option 3: Complete Pipeline
 
-#### Generate Test Cases with Configuration Management
   ```bash
-  python client/config_test_case_client.py
+# Navigate to the MCP system directory and run the full pipeline
+cd mcp_pytest/
+python client.py full-pipeline
   ```
 
 ## 📁 Project Structure
 
 ```
 mcp-generate-test-plane/
-├── server/
-│   ├── test_plan_generator.py      # Test plan generation MCP server
-│   ├── test_case_generator.py      # Test case generation MCP server
-│   ├── preprocess.py               # Input file preprocessing
-│   ├── validation.py               # Test plan validation
-│   └── url_fetcher.py             # URL content fetching
-  ├── client/
-  │   ├── client.py                   # Test plan generator client
-  │   ├── test_case_client.py         # Test case generator client (Excel format)
-  │   └── config_test_case_client.py  # Configuration-based test case client
-├── config/
-│   └── test_config.json           # Test case generation configuration
+├── mcp_pytest/                   # 🚀 Enhanced MCP Test Automation System
+│   ├── server.py                 # Enhanced MCP server with component logic
+│   ├── client.py                 # Advanced MCP client with workflows  
+│   ├── simple_generator.py       # Standalone generator (no MCP dependencies)
+│   ├── pipeline.py               # Pipeline automation script
+│   ├── requirements.txt          # MCP system dependencies
+│   ├── README.md                 # MCP system documentation
+│   └── SYSTEM_SUMMARY.md         # Technical architecture details
+├── 
 ├── input/
-│   ├── openapi.json               # OpenAPI specification
-│   └── urls.txt                   # Additional URLs to analyze
+│   ├── openapi.json              # OpenAPI specification
+│   ├── urls.txt                  # API endpoints
+│   └── clo.txt                   # Command line options
 ├── output/
-│   ├── test_plan.md               # Generated test plan
-│   └── test_cases.xlsx            # Generated test cases (Excel format)
-├── docs/                          # Documentation and diagrams
-├── run_complete_testing_pipeline.py  # Complete pipeline orchestrator
-└── requirements.txt
+│   ├── test_cases.csv            # Generated test cases (828 cases)
+│   ├── test_plan.md              # Test plan documentation
+│   └── test_cases.xlsx           # Excel format test cases
+├── 
+├── generated_tests/              # Output from simple generator
+│   ├── test_*_component.py       # Component-specific test files
+│   ├── conftest.py               # Pytest configuration
+│   ├── pytest.ini               # Pytest settings
+│   └── requirements.txt          # Dependencies
+├── 
+├── component_tests/              # Output from enhanced MCP system
+│   ├── test_config_component.py     # Config tests (46 cases)
+│   ├── test_namespaces_component.py # Namespaces tests (161 cases)
+│   ├── test_policies_component.py   # Policies tests (345 cases)
+│   ├── test_tables_component.py     # Tables tests (161 cases)
+│   ├── test_tasks_component.py      # Tasks tests (115 cases)
+│   └── *.py, *.ini, requirements.txt
+├── 
+├── server/                       # Original server components
+├── client/                       # Original client components
+├── config/                       # Configuration files
+└── docs/                         # Documentation
 ```
 
-## 📋 Input Files
+## 🔧 Available MCP Tools
 
-Place your input files in the `input/` directory:
+### Analysis Tools
+- **`analyze_test_cases`**: Comprehensive CSV analysis with component insights
+- **`list_components`**: Show all available components and their details
 
-- **openapi.json** - OpenAPI 3.0 specification of your API
-- **urls.txt** - Additional URLs to analyze (optional)
-- **Any other documentation files** (PDF, TXT, MD)
+### Generation Tools  
+- **`generate_component_tests`**: Create component-based pytest framework
+- **`run_component_tests`**: Execute tests with component-specific filtering
 
-## 📊 Output Files
+## 🎨 Component-Based Test Organization
 
-The generators create structured output files:
-
-### Test Plan (`output/test_plan.md`)
-- Executive summary and strategic overview
-- Comprehensive test strategy and methodology
-- Risk assessment and mitigation strategies
-- Test coverage analysis
-- Performance and security testing plans
-- Automation framework recommendations
-
-### Test Cases (`output/test_cases.xlsx`) - Excel Format
-
-The Excel format provides a structured, tabular view with multiple sheets:
-
-#### Sheet 1: Test Cases
-| Column | Description |
-|--------|-------------|
-| test_case_id | Unique identifier (e.g., TC-API-FUNC-001) |
-| test_suite | Test suite grouping |
-| title | Descriptive test case title |
-| description | What the test validates |
-| category | Functional, Security, Performance, Error Handling |
-| priority | Critical, High, Medium, Low |
-| api_method | GET, POST, PUT, DELETE, etc. |
-| api_path | API endpoint path |
-| test_steps | Detailed execution steps |
-| expected_results | Expected outcomes |
-| test_data | Required test data |
-| automation_candidate | Yes/No for automation feasibility |
-
-#### Sheet 2: Test Execution
-- Test execution tracking
-- Status, results, and notes
-- Bug references and execution history
-
-#### Sheet 3: Metadata
-- Generation statistics
-- API information
-- Coverage metrics
-
-#### Sheet 4: API Endpoints
-- Complete API endpoint summary
-- Parameters and response codes
-- Test case counts per endpoint
-
-## 🔧 MCP Server Tools
-
-### Test Plan Generator Tools
-- `generate_test_plan(input_dir)` - Generate comprehensive test plan from input directory
-
-### Test Case Generator Tools
-- `generate_test_cases(input_dir)` - Generate comprehensive Excel test cases directly from OpenAPI specification
-- `show_test_config()` - Display current test configuration and available profiles
-- `switch_test_profile(profile_name)` - Switch to a different test profile
-
-## 🎯 Configuration-Based Test Generation
-
-The test case generator now supports **configuration-based test generation** through the `config/test_config.json` file. This allows you to easily customize what types of test cases are generated without modifying code.
-
-### 📋 Configuration File Structure
-
-The `config/test_config.json` file contains:
-
-```json
-{
-  "enabled_test_types": {
-    "functional": {
-      "enabled": true,
-      "description": "Basic functional testing with valid inputs",
-      "priority": "Essential",
-      "tests": ["FUNC-HAPPY"]
-    },
-    "security": {
-      "enabled": true,
-      "description": "Security testing including authentication, authorization, and encryption",
-      "priority": "Critical",
-      "tests": ["SEC-AUTH", "SEC-AUTHZ", "SEC-CONTENT", "SEC-ENCRYPTION"]
-    },
-    "error_handling": {
-      "enabled": true,
-      "description": "Error response and invalid input handling", 
-      "priority": "High",
-      "tests": ["ERR-NOTFOUND", "ERR-INVALID"]
-    }
-    // ... more test types
-  },
-  "predefined_profiles": {
-    "quick": {
-      "description": "Quick smoke tests for CI/CD",
-      "enabled_types": ["functional", "security"]
-    },
-    "comprehensive": {
-      "description": "Full test coverage",
-      "enabled_types": ["functional", "security", "error_handling", "edge_cases", "performance", "reliability", "scalability", "compatibility"]
-    }
-    // ... more profiles
-  },
-  "current_profile": "quick"
-}
+### Traditional Approach (Old)
+```
+test_suite_part1.py    # 20 random tests
+test_suite_part2.py    # 20 random tests  
+test_suite_part3.py    # 20 random tests
 ```
 
-### 🔧 Available Test Types
+### Enhanced Approach (New) ✅
+```
+test_config_component.py      # All config-related tests
+test_namespaces_component.py  # All namespace-related tests
+test_policies_component.py    # All policy-related tests
+test_tables_component.py      # All table-related tests
+test_tasks_component.py       # All task-related tests
+```
 
-| Test Type | Description | Tests per Endpoint | Priority |
-|-----------|-------------|-------------------|----------|
-| **functional** | Comprehensive functional testing (positive, negative, validation, workflow, boundary) | 5 | Essential |
-| **security** | Authentication, authorization, encryption | 4 | Critical |
-| **error_handling** | Error responses and invalid input handling | 2 | High |
-| **edge_cases** | Boundary values and edge case scenarios | 1 | Medium |
-| **performance** | Load, stress, and spike testing | 3 | Medium |
-| **reliability** | Timeout handling and retry mechanisms | 2 | Medium |
-| **scalability** | Concurrent users and scaling behavior | 1 | Low |
-| **compatibility** | API version compatibility testing | 1 | Low |
-| **workflow_integration** | Intelligent workflow testing based on test plan analysis and API relationships | 4 | High |
+## 📋 Test Categories & Implementation
 
-#### 🎯 Enhanced Functional Testing Coverage
+| Category | Implementation | Example Tests |
+|----------|---------------|---------------|
+| **Functional** | Happy path validation, response structure | GET /config/health → 200 OK |
+| **Security** | Authentication, authorization, data exposure | Unauthorized access → 401/403 |
+| **Performance** | Response time, concurrent requests | Response < 2s, 5 concurrent calls |
+| **Error Handling** | Input validation, malicious input | SQL injection → 400 Bad Request |
+| **Reliability** | Retry logic, error recovery | Network failures, timeouts |
+| **Scalability** | Load testing, resource limits | High volume requests |
+| **Compatibility** | Version compatibility, browser support | API versioning |
+| **Edge Cases** | Boundary conditions, unusual inputs | Large payloads, special characters |
+| **Workflow** | Multi-step processes, integration | CRUD operations, data flow |
 
-The **functional** test type now provides comprehensive coverage with 5 distinct test scenarios:
+## 🎯 Pytest Markers Usage
 
-| Functional Test | Focus Area | What It Tests |
-|----------------|------------|---------------|
-| **FUNC-HAPPY** | Positive Cases | Happy path with valid data, successful workflows |
-| **FUNC-NEGATIVE** | Negative Cases | Missing parameters, wrong data types, invalid scenarios |
-| **FUNC-VALIDATION** | Input Validation | Field length, format validation, special characters |
-| **FUNC-WORKFLOW** | Business Logic | Workflow state transitions, business rules, audit trails |
-| **FUNC-BOUNDARY** | Boundary Conditions | Min/max values, edge cases, null handling |
-
-This ensures **complete functional coverage** including both positive and negative test scenarios, making functional testing much more robust than the previous single happy-path test.
-
-#### 🧠 Intelligent Workflow Integration Testing
-
-The **workflow_integration** test type provides **AI-powered test generation** that analyzes your test plan and API relationships to create sophisticated workflow tests:
-
-| Workflow Test | Intelligence Source | What It Tests |
-|---------------|-------------------|---------------|
-| **WORKFLOW-E2E** | Test Plan Analysis | End-to-end business workflows extracted from test plan context |
-| **WORKFLOW-SEQUENCE** | API Relationship Analysis | API call sequences and data flow between related endpoints |
-| **WORKFLOW-CRUD** | CRUD Pattern Detection | Complete resource lifecycle (Create → Read → Update → Delete) |
-| **WORKFLOW-INTEGRATION** | Cross-Module Analysis | Integration between different API modules and system components |
-
-**🎯 Key Intelligence Features:**
-- **Test Plan Context Awareness**: Extracts business workflows and application purpose from `output/test_plan.md`
-- **API Relationship Discovery**: Automatically identifies related APIs and potential call sequences
-- **CRUD Workflow Detection**: Recognizes Create-Read-Update-Delete patterns across endpoints
-- **Cross-Module Integration**: Tests how different API modules work together
-- **Business Context Integration**: Uses application context to create more meaningful test scenarios
-
-### 📚 Predefined Profiles
-
-| Profile | Description | Test Types | Use Case |
-|---------|-------------|------------|----------|
-| **quick** | Quick smoke tests for CI/CD (9 tests/endpoint) | functional, security | Fast pipeline validation |
-| **development** | Basic development testing (7 tests/endpoint) | functional, error_handling | Dev environment testing |
-| **workflow_focused** | Intelligent workflow and integration testing (9 tests/endpoint) | functional, workflow_integration | Business workflow validation |
-| **security_audit** | Security-focused testing (12 tests/endpoint) | functional, security, error_handling, edge_cases | Security assessments |
-| **performance_testing** | Performance and reliability focus (11 tests/endpoint) | functional, performance, reliability, scalability | Load testing scenarios |
-| **comprehensive** | Complete test coverage with workflow intelligence (23 tests/endpoint) | All 9 categories | Full testing cycles |
-
-### 🎮 Using Configuration Profiles
-
-#### Method 1: Interactive Configuration Client
 ```bash
-python client/config_test_case_client.py
+# Run by component
+pytest -m "component_config"
+pytest -m "component_namespaces"
+
+# Run by category  
+pytest -m "functional"
+pytest -m "security and priority_high"
+
+# Run by priority
+pytest -m "priority_critical"
+pytest -m "priority_high or priority_critical"
+
+# Combine markers
+pytest -m "component_config and functional and priority_high"
 ```
 
-This client provides an interactive interface to:
-- View current configuration
-- Switch between profiles
-- Generate test cases with selected profile
+## 🚀 Advanced Features
 
-#### Method 2: Direct Configuration Management
-
-**Show current configuration:**
+### Interactive Workflow
 ```python
-# Using MCP tools directly
-result = await session.call_tool("show_test_config", {})
+# Start interactive mode
+python mcp_pytest_client.py interactive
+
+# Choose from:
+# 1. Test all components
+# 2. Test specific component  
+# 3. Test by category
+# 4. Custom analysis
 ```
 
-**Switch profiles:**
+### Component-Specific Analysis
+```bash
+# Analyze specific component
+python mcp_pytest_client.py analyze --component config
+
+# Generate for specific component
+python mcp_pytest_client.py generate --component namespaces
+
+# Run specific component tests
+python mcp_pytest_client.py run --component policies --parallel
+```
+
+### Rich Reporting
+- **HTML Reports**: `--html=report.html --self-contained-html`
+- **Component Breakdown**: Test distribution by component
+- **Category Analysis**: Test coverage by type
+- **Priority Insights**: Critical vs. low priority test ratios
+
+## 📦 Dependencies
+
+```bash
+# Core MCP dependencies
+pip install mcp requests urllib3
+
+# Testing dependencies  
+pip install pytest pytest-html pytest-xdist
+
+# Or install from requirements
+pip install -r mcp_requirements.txt
+```
+
+## 🔍 Component Details
+
+### Config Component (46 tests)
+- Health checks, configuration management
+- Endpoints: `/config/health`, `/config/reconfigure`
+- Categories: Functional, Security, Performance, Reliability
+
+### Namespaces Component (161 tests)  
+- Namespace operations, policy management
+- Endpoints: `/namespaces/{id}/policies`, `/namespaces/{id}/tables`
+- Full CRUD operations with validation
+
+### Policies Component (345 tests)
+- Policy resource management, permissions
+- Endpoints: `/policies/resource`, `/policies/permissions`
+- Complex authorization and security testing
+
+### Tables Component (161 tests)
+- Table operations, data management  
+- Endpoints: `/tables/{id}/paused`, `/tables/{id}/data`
+- Performance and scalability focus
+
+### Tasks Component (115 tests)
+- Task processing, ingestion logs
+- Endpoints: `/tasks/ingestlog`, `/tasks/status`
+- Workflow and error handling emphasis
+
+## 🤖 Why No LLMs for Test Generation?
+
+### **Rule-Based vs LLM-Based Approach**
+
+**Current Approach: Rule-Based Templates** ✅
 ```python
-# Switch to performance testing profile
-result = await session.call_tool("switch_test_profile", {"profile_name": "performance_testing"})
+# Fast, reliable, consistent
+if test_case.category == "Security":
+    return generate_security_test_template(test_case)
+elif test_case.category == "Performance":  
+    return generate_performance_test_template(test_case)
 ```
 
-#### Method 3: Manual Configuration Editing
-
-Edit `config/test_config.json` directly:
-
-```json
-{
-  // To enable/disable individual test types
-  "enabled_test_types": {
-    "functional": {"enabled": true},
-    "security": {"enabled": false},  // Disable security tests
-    "performance": {"enabled": true}
-  },
-  
-  // Or use predefined profiles
-  "current_profile": "security_audit"
-}
-```
-
-### 💡 Configuration Examples
-
-**Quick CI/CD Testing (9 tests per endpoint):**
-```bash
-python client/config_test_case_client.py
-# Select "quick" profile  
-# Generates: 5 functional + 4 security tests
-```
-
-**Full Security Audit (12 tests per endpoint):**
-```json
-"current_profile": "security_audit"
-```
-
-**Performance Testing Focus (11 tests per endpoint):**
-```json
-"current_profile": "performance_testing"
-```
-
-**Intelligent Workflow Testing (9 tests per endpoint):**
-```bash
-python client/config_test_case_client.py
-# Select "workflow_focused" profile
-# Generates: 5 functional + 4 intelligent workflow tests
-# Uses test plan analysis for context-aware test generation
-```
-
-**Custom Configuration:**
-```json
-{
-  "current_profile": null,  // Use individual settings
-  "enabled_test_types": {
-    "functional": {"enabled": true},
-    "workflow_integration": {"enabled": true},
-    "error_handling": {"enabled": true}
-    // Combines functional, workflow intelligence, and error handling
-  }
-}
-```
-
-### 🔄 Dynamic Profile Switching
-
-Switch profiles programmatically or interactively:
-
+**Alternative: LLM-Based Generation** 🤖
 ```python
-# Switch to comprehensive testing
-await session.call_tool("switch_test_profile", {"profile_name": "comprehensive"})
-
-# Generate test cases with new profile
-result = await session.call_tool("generate_test_cases", {"input_dir": "input"})
+# Creative, context-aware, but unpredictable
+prompt = f"Generate pytest for {api_endpoint} testing {category}..."
+test_code = await llm.generate(prompt)
 ```
 
-The configuration system provides flexibility to generate exactly the test types you need for different scenarios, from quick smoke tests to comprehensive testing suites.
+### **Why Rule-Based for This System?**
 
-## 🚀 Integration with Testing Frameworks
+| Factor | Rule-Based ✅ | LLM-Based ❓ |
+|--------|---------------|--------------|
+| **Consistency** | Same pattern every time | Varies per generation |
+| **Speed** | Instant (no API calls) | Slower (API latency) |
+| **Cost** | Free | $$ per API call |
+| **Reliability** | 100% working tests | May need debugging |
+| **Scale** | 828 tests in seconds | Expensive at scale |
+| **Debugging** | Easy to trace templates | Hard to debug AI logic |
 
-The generated test cases can be integrated with popular testing frameworks:
+### **When to Use Each Approach**
 
-### Excel Integration
-```bash
-# Open Excel file directly
-open output/test_cases.xlsx
+**Rule-Based (Current) - Best for:**
+- High-volume test generation (828+ tests)
+- Production reliability requirements
+- Consistent test patterns
+- Cost-sensitive projects
+- Predictable API testing
 
-# Use Excel for test case management
-# - Review and edit test cases in Excel
-# - Track test execution in the "Test Execution" sheet
-# - Export specific sheets as CSV for tool integration
-```
+**LLM-Based - Best for:**
+- Complex, unique test scenarios
+- Creative edge case generation
+- Natural language test descriptions
+- One-off custom tests
+- Exploratory testing
 
-### Postman
-```bash
-# Import test_cases.json as a Postman collection
-# Or convert Excel data to Postman format
-# Use the structured test data from Excel sheets
-```
+## 🎉 Benefits
 
-### REST Assured (Java)
-```java
-// Convert Excel test cases to REST Assured test classes
-// Read Excel data using Apache POI or similar
-// Generate @Test methods from Excel rows
-```
-
-### pytest (Python)
-```python
-# Generate pytest test functions from Excel data
-# Use pandas to read Excel test cases
-# Create parameterized tests from Excel data
-```
-
-### Test Management Tools
-```bash
-# Import Excel test cases into:
-# - TestRail, Zephyr, qTest
-# - Azure DevOps Test Plans
-# - Jira with Xray plugin
-```
-
-## 🔍 Test Case Structure
-
-Each generated test case includes:
-
-- **Identification**: Unique ID, title, description
-- **Classification**: Category, priority, test level, risk level
-- **API Details**: Method, path, operation ID
-- **Execution**: Detailed test steps with expected results
-- **Data**: Valid inputs, invalid inputs, edge cases
-- **Context**: Preconditions, post-conditions, dependencies
-- **Automation**: Automation feasibility and tags
-
-## 🛡️ Security Testing
-
-The generators include comprehensive security testing:
-
-- **OWASP Top 10** vulnerability testing
-- **Authentication & Authorization** testing
-- **Input validation** and injection attack testing
-- **Session management** testing
-- **API security** best practices
-
-## ⚡ Performance Testing
-
-Generated test cases include:
-
-- **Load testing** scenarios
-- **Stress testing** beyond normal limits
-- **Spike testing** for sudden traffic increases
-- **Response time** validation
-- **Throughput** testing
-
-## 🔧 Customization
-
-### Custom Prompts
-Modify the prompts in the server files to customize the generated content:
-- `server/test_plan_generator.py` - Line ~50
-- `server/test_case_generator.py` - Line ~90
-
-### Custom Validation
-Add custom validation rules in `server/validation.py`
-
-### Custom Preprocessing
-Extend file processing capabilities in `server/preprocess.py`
-
-## 🚀 Advanced Usage
-
-### Custom Input Processing
-```python
-# Add support for new file formats
-def process_custom_format(file_path):
-    # Your custom processing logic
-    return processed_content
-```
-
-### Environment-Specific Test Cases
-```bash
-# Generate test cases for specific environments
-python client/test_case_client.py --environment staging
-```
-
-### CI/CD Integration
-```yaml
-# GitHub Actions example
-- name: Generate Test Plan
-  run: python run_complete_testing_pipeline.py
-  
-- name: Upload Test Cases
-  uses: actions/upload-artifact@v3
-  with:
-    name: test-cases
-    path: output/test_cases.json
-```
+✅ **Better Organization**: One test file per component
+✅ **Maintainability**: Logical grouping by functionality  
+✅ **Scalability**: Easy to add new components
+✅ **Flexibility**: Component-specific test execution
+✅ **Intelligence**: Category-aware test implementations
+✅ **Reporting**: Rich insights and analytics
+✅ **Integration**: Seamless MCP workflow
+✅ **Cost Effective**: No LLM API costs for generation
+✅ **Reliable**: Deterministic, predictable test code
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+2. Create a feature branch
+3. Add new components or enhance existing ones
+4. Test with the MCP system
+5. Submit a pull request
 
-## 📝 License
+## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🆘 Support
-
-For support, please:
-1. Check the [documentation](docs/)
-2. Review existing [issues](../../issues)
-3. Create a new issue with detailed information
-
-## 🔮 Roadmap
-
-- [ ] Support for GraphQL API specifications
-- [ ] Integration with more testing frameworks
-- [ ] Real-time test execution monitoring
-- [ ] AI-powered test case optimization
-- [ ] Multi-language test case generation
-- [ ] Visual test case designer
+This project is licensed under the MIT License.
 
 ---
 
-**Happy Testing! 🧪✨**
+**Enhanced Test Automation Framework** - Powered by Model Context Protocol (MCP)
+*Intelligent • Component-Based • Scalable • Maintainable*
